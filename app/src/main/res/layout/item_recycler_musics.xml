@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#fff"
+        android:id="@+id/rlLine"></RelativeLayout>
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/imgMediaPlayer"
+        android:layout_below="@id/rlLine"
+        android:src="@drawable/ic_media_player"
+        android:scaleType="centerInside"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtNameMediaPlayer"
+        android:textSize="18sp"
+        android:text="Chi rieng minh anh"
+        android:layout_toRightOf="@id/imgMediaPlayer"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@+id/rlButton"
+        android:textColor="#fff"
+        android:maxLength="18"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtArtistMediaPlayer"
+        android:textSize="15sp"
+        android:text="Chi rieng minh anh"
+        android:layout_toRightOf="@id/imgMediaPlayer"
+        android:layout_marginLeft="10dp"
+        android:layout_toLeftOf="@+id/rlButton"
+        android:layout_below="@id/txtNameMediaPlayer"
+        android:textColor="#fff"
+        android:maxLength="23"
+        android:maxLines="1" />
+</RelativeLayout>

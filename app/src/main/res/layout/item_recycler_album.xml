@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="5dp"
+    android:background="#cccccc"
+    >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/imgAvatarAlbum"
+        android:scaleType="centerCrop"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtNameAlbum"
+        android:text="Tuyển tập những bài hát hay"
+        android:textSize="15sp"
+        android:layout_below="@id/imgAvatarAlbum"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:id="@+id/rlLine"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/txtNameAlbum"
+        android:background="#cccccc"
+        android:layout_marginTop="5dp"
+        ></RelativeLayout>
+
+
+    <ImageView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_below="@id/rlLine"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/imgMicro"
+        android:src="@drawable/ic_micro"
+        android:layout_marginTop="5dp"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtInfoArtist"
+        android:text="Nhiều ca sĩ"
+        android:layout_below="@id/rlLine"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/imgMicro"
+        android:layout_marginLeft="5dp"
+        android:textSize="13sp"
+        />
+
+</RelativeLayout>

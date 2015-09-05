@@ -1,0 +1,138 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@drawable/bg_main"
+    >
+    
+    <com.example.thong.playmusic.widget.TabBar
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/tabBar"
+        ></com.example.thong.playmusic.widget.TabBar>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:background="#aa0489B1"
+        android:id="@+id/rlPlayMusic"
+        >
+
+        <com.example.thong.playmusic.widget.CircleImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/imgMediaPlayer"
+            android:scaleType="center"
+            android:src="@drawable/ic_disk1"
+            />
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/imgMediaPlayer"
+            android:id="@+id/seekBar"
+            android:layout_marginRight="30dp"
+            android:progressDrawable="@drawable/seek_progress"
+            android:thumb="@drawable/ic_record"
+            android:minHeight="6dip"
+            android:maxHeight="6dip"
+            android:layout_marginLeft="-5dp"
+
+            />
+        <RelativeLayout
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:id="@+id/rlButton"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            >
+            
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/imgBack"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_back"
+                />
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerInParent="true"
+                android:id="@+id/imgPause"
+                android:src="@drawable/ic_pause"
+                />
+
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/imgNext"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ic_next"
+                />
+
+        </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtNameMediaPlayer"
+            android:textSize="15sp"
+            android:text="Chi rieng minh anh"
+            android:layout_toRightOf="@id/imgMediaPlayer"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_toLeftOf="@+id/rlButton"
+            android:textColor="#fff"
+            android:maxLength="18"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtArtistMediaPlayer"
+            android:textSize="13sp"
+            android:text="Chi rieng minh anh"
+            android:layout_toRightOf="@id/imgMediaPlayer"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@+id/rlButton"
+            android:layout_below="@id/txtNameMediaPlayer"
+            android:textColor="#fff"
+            android:maxLength="23"
+            android:maxLines="1"
+            />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_stop"
+            android:id="@+id/imgStop"
+            />
+
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_below="@id/tabBar"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/viewPager"
+        />
+</RelativeLayout>
