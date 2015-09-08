@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -68,6 +69,7 @@ public class MainActivity extends FragmentActivity {
 
     @Click(R.id.imgPause)
     void listenerPause() {
+        Log.v(TAG,"1");
         if(mManagerPlay.getIsPause()) {
             mImgPause.setImageResource(R.drawable.ic_pause);
             mManagerPlay.onStart();

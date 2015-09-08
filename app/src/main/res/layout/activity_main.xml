@@ -16,7 +16,15 @@
         android:id="@+id/tabBar"
         ></com.example.thong.playmusic.widget.TabBar>
 
-
+    <android.support.v4.view.ViewPager
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_below="@id/tabBar"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/viewPager"
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -126,13 +134,4 @@
 
     </RelativeLayout>
 
-    <android.support.v4.view.ViewPager
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_below="@id/tabBar"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:id="@+id/viewPager"
-        />
 </RelativeLayout>

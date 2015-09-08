@@ -134,6 +134,7 @@ public class ManagerPlay {
         try {
             Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
             cursor = contentResolver.query(uri, projection, selection, null, sortOrder);
+
             if (cursor != null) {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
