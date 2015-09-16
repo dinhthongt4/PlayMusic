@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.thong.playmusic.R;
+import com.example.thong.playmusic.model.ChildMusicOnline;
 import com.example.thong.playmusic.model.MediaInfo;
 
 import java.util.ArrayList;
@@ -17,26 +18,24 @@ import java.util.ArrayList;
  */
 public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAdapter.ViewHolder> {
 
-    private final ArrayList<MediaInfo> mMediaInfos;
+    private final ArrayList<ChildMusicOnline> mMediaInfos;
+    private OnItemClick mOnItemClick;
 
-    public RecyclerMusicsAdapter(ArrayList<MediaInfo> mediaInfos) {
+    public RecyclerMusicsAdapter(ArrayList<ChildMusicOnline> mediaInfos) {
         this.mMediaInfos = mediaInfos;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_recycler_musics,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_recycler_musics, viewGroup, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        viewHolder.txtName.setText(mMediaInfos.get(i).getName());
+        viewHolder.txtName.setText(mMediaInfos.get(i).getTitle());
         viewHolder.txtArtist.setText(mMediaInfos.get(i).getArtist());
-        if(mMediaInfos.get(i).getBmMediaPlayer() != null) {
-            viewHolder.imgMediaPlayer.setImageBitmap(mMediaInfos.get(i).getBmMediaPlayer());
-        }
     }
 
     @Override
@@ -50,11 +49,29 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
         final TextView txtName;
         final TextView txtArtist;
 
-         ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             txtName = (TextView) itemView.findViewById(R.id.txtNameMediaPlayer);
             txtArtist = (TextView) itemView.findViewById(R.id.txtArtistMediaPlayer);
             imgMediaPlayer = (ImageView) itemView.findViewById(R.id.imgMediaPlayer);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(mOnItemClick !=  null) {
+                        mOnItemClick.onClick(getPosition());
+                    }
+                }
+            });
         }
+    }
+
+    public void setOnItemClick(OnItemClick onItemClick) {
+        mOnItemClick = onItemClick;
+    }
+
+
+    public interface OnItemClick {
+        public void onClick(int position);
     }
 }

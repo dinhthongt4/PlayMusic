@@ -1,20 +1,16 @@
 package com.example.thong.playmusic;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.thong.playmusic.adapter.ViewPagerMainAdapter;
 import com.example.thong.playmusic.media.player.ManagerPlay;
-import com.example.thong.playmusic.model.MediaInfo;
+import com.example.thong.playmusic.model.ChildMusicOnline;
 import com.example.thong.playmusic.service.MediaPlayerService_;
 import com.example.thong.playmusic.widget.CircleImageView;
 import com.example.thong.playmusic.widget.TabBar;
@@ -32,9 +28,6 @@ public class MainActivity extends FragmentActivity {
     private static final String TAG = "MAIN";
     private ManagerPlay mManagerPlay;
     private ViewPagerMainAdapter mViewPagerMainAdapter;
-
-    @ViewById(R.id.seekBar)
-    SeekBar mSeekBar;
 
     @ViewById(R.id.imgMediaPlayer)
     CircleImageView mImgMediaPlayer;
@@ -69,7 +62,10 @@ public class MainActivity extends FragmentActivity {
 
     @Click(R.id.imgPause)
     void listenerPause() {
-        Log.v(TAG,"1");
+
+//        Intent intent = new Intent(this, VideoViewActivity_.class);
+//        startActivity(intent);
+
         if(mManagerPlay.getIsPause()) {
             mImgPause.setImageResource(R.drawable.ic_pause);
             mManagerPlay.onStart();
@@ -91,68 +87,18 @@ public class MainActivity extends FragmentActivity {
         mManagerPlay.onBack(this);
     }
 
-    @Click(R.id.imgStop)
-    void listenerStop() {
-        stopService(new Intent(this,MediaPlayerService_.class));
-    }
-
     // listener for media player
     private void setListener() {
 
         mManagerPlay.setmOnSuccessPlayer(new ManagerPlay.OnSuccessPlayer() {
             @Override
-            public void onSuccess(MediaInfo mediaInfo) {
+            public void onSuccess(ChildMusicOnline childMusicOnline) {
 
-                mTxtNameMediaPlayer.setText(checkLimitText(mediaInfo.getName(),15));
-                mTxtArtistMediaPlayer.setText(checkLimitText(mediaInfo.getArtist(),20));
-                mSeekBar.setMax(Integer.parseInt(mediaInfo.getDuration()));
-                mSeekBar.setVisibility(View.VISIBLE);
+                mTxtNameMediaPlayer.setText(checkLimitText(childMusicOnline.getTitle(),15));
+                mTxtArtistMediaPlayer.setText(checkLimitText(childMusicOnline.getArtist(),20));
                 mManagerPlay.setIsPause(false);
                 mImgPause.setImageResource(R.drawable.ic_pause);
-                if(mediaInfo.getBmMediaPlayer() == null) {
-                    mImgMediaPlayer.setImageResource(R.drawable.ic_disk1);
-
-                } else {
-                    mImgMediaPlayer.setImageBitmap(mediaInfo.getBmMediaPlayer());
-                }
-            }
-        });
-
-        mManagerPlay.setOnChangeDuration(new ManagerPlay.OnChangeDuration() {
-            @Override
-            public void onChanger(MediaPlayer mediaPlayer) {
-                mSeekBar.setProgress(mediaPlayer.getCurrentPosition());
-                mSeekBar.setMax(mediaPlayer.getDuration());
-            }
-        });
-
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            boolean touch;
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                if (progress == mManagerPlay.getCurrentMediaPlayer().getDuration()) {
-                    mManagerPlay.onNext(getApplicationContext());
-                }
-
-                if (touch) {
-                    mSeekBar.setProgress(progress);
-                    mManagerPlay.getCurrentMediaPlayer().seekTo(progress);
-                    touch = false;
-                }
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                touch = true;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+                mImgMediaPlayer.setImageResource(R.drawable.ic_disk1);
             }
         });
 
@@ -183,6 +129,11 @@ public class MainActivity extends FragmentActivity {
 
     // check limit of textView
     private String checkLimitText(String s, int limit) {
+
+        if(s == null) {
+            s = "";
+        }
+
         if(s.length() > limit) {
             s = s.substring(0,limit);
             s = s + "...";
@@ -198,7 +149,7 @@ public class MainActivity extends FragmentActivity {
     private void checkMediaPlayer() {
         if (mManagerPlay.getCurrentMediaPlayer() != null) {
 
-            mTxtNameMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getName());
+            mTxtNameMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getTitle());
             mTxtArtistMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getArtist());
             if(mManagerPlay.getIsPause()) {
                 mImgPause.setImageResource(R.drawable.ic_play);

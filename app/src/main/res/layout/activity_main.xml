@@ -28,7 +28,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="#aa0489B1"
         android:id="@+id/rlPlayMusic"
@@ -43,19 +43,7 @@
             android:scaleType="center"
             android:src="@drawable/ic_disk1"
             />
-        <SeekBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/imgMediaPlayer"
-            android:id="@+id/seekBar"
-            android:layout_marginRight="30dp"
-            android:progressDrawable="@drawable/seek_progress"
-            android:thumb="@drawable/ic_record"
-            android:minHeight="6dip"
-            android:maxHeight="6dip"
-            android:layout_marginLeft="-5dp"
 
-            />
         <RelativeLayout
             android:layout_width="150dp"
             android:layout_height="match_parent"
@@ -101,7 +89,7 @@
             android:text="Chi rieng minh anh"
             android:layout_toRightOf="@id/imgMediaPlayer"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_toLeftOf="@+id/rlButton"
             android:textColor="#fff"
             android:maxLength="18"
@@ -123,15 +111,6 @@
             android:maxLength="23"
             android:maxLines="1"
             />
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_stop"
-            android:id="@+id/imgStop"
-            />
-
     </RelativeLayout>
 
 </RelativeLayout>

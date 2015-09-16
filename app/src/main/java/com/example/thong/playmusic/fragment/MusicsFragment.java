@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.adapter.RecyclerMusicsAdapter;
 import com.example.thong.playmusic.media.player.ManagerPlay;
+import com.example.thong.playmusic.model.ChildMusicOnline;
 import com.example.thong.playmusic.model.MediaInfo;
 
 import org.androidannotations.annotations.AfterViews;
@@ -28,7 +29,7 @@ public class MusicsFragment extends Fragment {
 
     private RecyclerView.LayoutManager mLayoutManager;
     private ManagerPlay mManagerPlay;
-    private ArrayList<MediaInfo> mMediaInfos;
+    private ArrayList<ChildMusicOnline> mChildMusicOnlines;
     private RecyclerMusicsAdapter mMusicsAdapter;
 
     @AfterViews
@@ -36,8 +37,18 @@ public class MusicsFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerMusics.setLayoutManager(mLayoutManager);
         mManagerPlay = ManagerPlay.getInstance();
-        mMediaInfos = mManagerPlay.getListMusics();
-        mMusicsAdapter = new RecyclerMusicsAdapter(mMediaInfos);
+        mChildMusicOnlines = mManagerPlay.getListMusics();
+        mMusicsAdapter = new RecyclerMusicsAdapter(mChildMusicOnlines);
         mRecyclerMusics.setAdapter(mMusicsAdapter);
+        setListener();
+    }
+
+    void setListener() {
+        mMusicsAdapter.setOnItemClick(new RecyclerMusicsAdapter.OnItemClick() {
+            @Override
+            public void onClick(int position) {
+                
+            }
+        });
     }
 }

@@ -3,6 +3,7 @@ package com.example.thong.playmusic.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.example.thong.playmusic.media.player.ManagerPlay;
 
@@ -27,6 +28,7 @@ public class MediaPlayerService extends Service {
 
         if(mManagerPlay.getCurrentMediaPlayer() == null) {
             if(mManagerPlay.getListMusics().size() > 0) {
+                Log.v(TAG,"success");
                 mManagerPlay.playSound(getApplicationContext());
             }
 

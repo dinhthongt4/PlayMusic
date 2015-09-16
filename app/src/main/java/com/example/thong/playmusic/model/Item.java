@@ -9,6 +9,24 @@ public class Item {
     private Id id;
     private Snippet snippet;
     private int headerID;
+    private int typeItem;
+    private int numberList;
+
+    public int getNumberList() {
+        return numberList;
+    }
+
+    public void setNumberList(int numberList) {
+        this.numberList = numberList;
+    }
+
+    public int getTypeItem() {
+        return typeItem;
+    }
+
+    public void setTypeItem(int typeItem) {
+        this.typeItem = typeItem;
+    }
 
     public int getHeaderID() {
         return headerID;
@@ -42,16 +60,6 @@ public class Item {
     }
 
 }
-class Id {
-    private String videoId;
 
-    public String getVideoId() {
-        return videoId;
-    }
-
-    public void setVideoId(String videoId) {
-        this.videoId = videoId;
-    }
-}
 
 
