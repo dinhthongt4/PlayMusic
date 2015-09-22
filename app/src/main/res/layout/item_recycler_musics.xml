@@ -1,52 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="10dp"
+    android:paddingBottom="@dimen/margin.10"
     >
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#fff"
-        android:id="@+id/rlLine"></RelativeLayout>
+        android:layout_height="@dimen/layout.1"
+        android:background="@color/txt.default"
+        android:id="@+id/rlLine"/>
 
     <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/layout.50"
+        android:layout_height="@dimen/layout.50"
         android:id="@+id/imgMediaPlayer"
         android:layout_below="@id/rlLine"
-        android:src="@drawable/ic_media_player"
+        android:src="@drawable/ic_avatar_music"
         android:scaleType="centerInside"
-        />
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtNameMediaPlayer"
-        android:textSize="18sp"
-        android:text="Chi rieng minh anh"
+        android:textSize="@dimen/textsize.18"
         android:layout_toRightOf="@id/imgMediaPlayer"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="@dimen/margin.10"
+        android:layout_marginTop="@dimen/margin.10"
         android:layout_toLeftOf="@+id/rlButton"
-        android:textColor="#fff"
+        android:textColor="@color/txt.default"
         android:maxLength="18"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:ignore="RtlHardcoded,UnknownIdInLayout" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtArtistMediaPlayer"
-        android:textSize="15sp"
-        android:text="Chi rieng minh anh"
+        android:textSize="@dimen/text.size.15"
         android:layout_toRightOf="@id/imgMediaPlayer"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/margin.10"
         android:layout_toLeftOf="@+id/rlButton"
         android:layout_below="@id/txtNameMediaPlayer"
-        android:textColor="#fff"
+        android:textColor="@color/txt.default"
         android:maxLength="23"
-        android:maxLines="1" />
+        android:maxLines="1"
+        tools:ignore="RtlHardcoded,UnknownIdInLayout" />
 </RelativeLayout>

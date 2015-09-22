@@ -49,9 +49,74 @@ public class ManagerPlay {
     }
 
     // play a music
-    public void playSound(final Context context) {
+    public void playSound(final Context context,int position, ArrayList<ChildMusicOnline> childMusicOnlines) {
 
-        Log.v(TAG,mChildMusicOnlines.get(numberMedia).getUrlStream());
+        if(mChildMusicOnlines != null) {
+            mChildMusicOnlines.clear();
+        }
+        mChildMusicOnlines = new ArrayList<>();
+        mChildMusicOnlines.addAll(childMusicOnlines);
+        numberMedia = position;
+
+        Uri uri = Uri.parse(mChildMusicOnlines.get(numberMedia).getUrlStream());
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mMediaPlayer.start();
+                if (mOnSuccessPlayer != null) {
+                    mOnSuccessPlayer.onSuccess(mChildMusicOnlines.get(numberMedia));
+                }
+            }
+        });
+        try {
+            mMediaPlayer.setDataSource(context, uri);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                onNext(context);
+            }
+        });
+    }
+
+    public void playSound(final Context context,int position) {
+
+        numberMedia = position;
+
+        Uri uri = Uri.parse(mChildMusicOnlines.get(numberMedia).getUrlStream());
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mMediaPlayer.start();
+                if (mOnSuccessPlayer != null) {
+                    mOnSuccessPlayer.onSuccess(mChildMusicOnlines.get(numberMedia));
+                }
+            }
+        });
+        try {
+            mMediaPlayer.setDataSource(context, uri);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                onNext(context);
+            }
+        });
+    }
+
+    private void playSound(final Context context) {
 
         Uri uri = Uri.parse(mChildMusicOnlines.get(numberMedia).getUrlStream());
         mMediaPlayer = new MediaPlayer();
@@ -82,9 +147,14 @@ public class ManagerPlay {
 
     public void playSoundOnline(ArrayList<ChildMusicOnline> childMusicOnlines, final int position) {
 
-        Log.v(TAG,childMusicOnlines.get(position).getUrlStream()+"?client_id="+ FieldFinal.CLIENT_ID);
+        Log.v(TAG, childMusicOnlines.get(position).getUrlStream() + "?client_id=" + FieldFinal.CLIENT_ID);
 
-        mChildMusicOnlines.clear();
+        if(mChildMusicOnlines != null) {
+            mChildMusicOnlines.clear();
+        } else {
+            mChildMusicOnlines = new ArrayList<>();
+        }
+
         mChildMusicOnlines.addAll(childMusicOnlines);
 
         mMediaPlayer = new MediaPlayer();
@@ -133,16 +203,22 @@ public class ManagerPlay {
     }
     // pause a music
     public void onPause() {
-        mMediaPlayer.pause();
+        if(mMediaPlayer != null) {
+            mMediaPlayer.pause();
+        }
     }
 
     // start a music
     public void onStart() {
-        mMediaPlayer.start();
+        if(mMediaPlayer != null) {
+            mMediaPlayer.start();
+        }
     }
 
     // next a music in list
     public void onNext(Context context) {
+
+        if(mChildMusicOnlines != null) {
         if (numberMedia < mChildMusicOnlines.size() - 1) {
 
             if (mMediaPlayer != null) {
@@ -150,6 +226,7 @@ public class ManagerPlay {
             }
             numberMedia++;
             playSound(context);
+        }
         }
     }
 
@@ -170,56 +247,22 @@ public class ManagerPlay {
     }
 
     public ArrayList<ChildMusicOnline> getListMusics() {
-        return mChildMusicOnlines;
-    }
-
-    // Load information all of file sound
-    public void scanSdcard(ContentResolver contentResolver) {
-        mChildMusicOnlines = new ArrayList<>();
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-        String[] projection = {
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.ALBUM,
-        };
-        final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
-
-        Cursor cursor = null;
-        try {
-            Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-            cursor = contentResolver.query(uri, projection, selection, null, sortOrder);
-
-            if (cursor != null) {
-                cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-
-                    ChildMusicOnline childMusicOnline = new ChildMusicOnline();
-
-                    childMusicOnline.setArtist(cursor.getString(1));
-                    childMusicOnline.setUrlStream(cursor.getString(2));
-                    childMusicOnline.setTitle(cursor.getString(3));
-                    childMusicOnline.setDuration(Long.parseLong(cursor.getString(4)));
-                    mChildMusicOnlines.add(childMusicOnline);
-                    cursor.moveToNext();
-                }
-
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        if(mChildMusicOnlines != null) {
+            return mChildMusicOnlines;
+        } else {
+            return null;
         }
     }
 
     //get current MediaPlayer
     public MediaPlayer getCurrentMediaPlayer() {
-        return mMediaPlayer;
+
+        if(mMediaPlayer != null) {
+            return mMediaPlayer;
+        }
+        else {
+            return null;
+        }
     }
 
     public ChildMusicOnline getCurrentInfoMediaPlayer() {

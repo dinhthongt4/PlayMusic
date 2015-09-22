@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <color name="bg.header.introduce.activity">#aa0489B1</color>
+    <color name="bg.header.main.activity">#da0489B1</color>
+    <color name="txt.default">#fff</color>
+    <color name="bg.dialog.album.fragment">#848484</color>
+    <color name="bg.search">#CFD8DC</color>
+    <color name="bg.header.video">#A9A9F5</color>
+    <color name="bg.item.music">#E6E6E6</color>
+    <color name="txt.chanel.video">#D8D8D8</color>
+    <color name="bg.youtube.view">#585858</color>
+    <color name="bg.seek.bar.nomal">#BDBDBD</color>
+    <color name="bg.seek.bar.progress">#8181F7</color>
+    <color name="bg.seek.bar.second.progress">#848484</color>
 </resources>

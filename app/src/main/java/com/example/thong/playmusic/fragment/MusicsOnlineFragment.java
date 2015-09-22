@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.bignerdranch.expandablerecyclerview.ClickListeners.ExpandCollapseListener;
+import com.bignerdranch.expandablerecyclerview.Listener.ExpandCollapseListener;
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.adapter.RecyclerExpandableMusicsAdapter;
@@ -199,7 +199,9 @@ public class MusicsOnlineFragment extends Fragment {
     // play music online
     private void playSoundOnline(ArrayList<ChildMusicOnline> childMusicOnlines,int position) {
         ManagerPlay managerPlay = ManagerPlay.getInstance();
-        managerPlay.getCurrentMediaPlayer().release();
+        if(managerPlay.getCurrentMediaPlayer() != null) {
+            managerPlay.getCurrentMediaPlayer().release();
+        }
         managerPlay.playSoundOnline(childMusicOnlines, position);
     }
 }

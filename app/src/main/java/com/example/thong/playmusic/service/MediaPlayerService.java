@@ -24,15 +24,6 @@ public class MediaPlayerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         mManagerPlay = ManagerPlay.getInstance();
-        mManagerPlay.scanSdcard(getContentResolver());
-
-        if(mManagerPlay.getCurrentMediaPlayer() == null) {
-            if(mManagerPlay.getListMusics().size() > 0) {
-                Log.v(TAG,"success");
-                mManagerPlay.playSound(getApplicationContext());
-            }
-
-        }
         return START_NOT_STICKY;
     }
 

@@ -7,21 +7,20 @@ import android.graphics.Bitmap;
  */
 public class Album {
     private String albumName;
-    private Bitmap imgPathAvatar;
+    private int idAlbum;
+
+    public int getIdAlbum() {
+        return idAlbum;
+    }
+
+    public void setIdAlbum(int idAlbum) {
+        this.idAlbum = idAlbum;
+    }
 
     public String getAlbumName() {
         return albumName;
     }
-
     public void setAlbumName(String albumName) {
         this.albumName = albumName;
-    }
-
-    public Bitmap getImgPathAvatar() {
-        return imgPathAvatar;
-    }
-
-    public void setImgPathAvatar(Bitmap imgPathAvatar) {
-        this.imgPathAvatar = imgPathAvatar;
     }
 }

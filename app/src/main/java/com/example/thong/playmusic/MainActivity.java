@@ -54,10 +54,10 @@ public class MainActivity extends FragmentActivity {
         mManagerPlay = ManagerPlay.getInstance();
         setListener();
         checkMediaPlayer();
-        setAnimationDisk();
 
         mViewPagerMainAdapter = new ViewPagerMainAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerMainAdapter);
+        mViewPager.setOffscreenPageLimit(3);
     }
 
     @Click(R.id.imgPause)
@@ -140,10 +140,6 @@ public class MainActivity extends FragmentActivity {
         }
 
         return s;
-    }
-
-    private void setAnimationDisk() {
-        mImgMediaPlayer.setStartAnimation();
     }
 
     private void checkMediaPlayer() {

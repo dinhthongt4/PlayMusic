@@ -1,20 +1,32 @@
 package com.example.thong.playmusic.activity;
 
-import android.content.Intent;
+import android.content.ContentResolver;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.widget.TextView;
+
 
 import com.example.thong.playmusic.MainActivity_;
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.adapter.ViewPagerIntroduceAdapter;
+import com.example.thong.playmusic.database.ManagerDatabase;
+import com.example.thong.playmusic.model.ChildMusicOnline;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+
 
 /**
  * Created by thong on 9/15/15.
@@ -23,14 +35,25 @@ import java.util.ArrayList;
 @EActivity(R.layout.activity_introduce)
 public class IntroduceActivity extends FragmentActivity {
 
-    private int [] mCount = new int[5];
+    private final int [] mCount = new int[5];
     private ViewPagerIntroduceAdapter mViewPagerIntroduceAdapter;
+    private boolean mIsIntroduce = false;
 
     @ViewById(R.id.viewPager)
     ViewPager mViewPager;
 
     @ViewById(R.id.txtNext)
     TextView mTxtNext;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getSharedPre();
+        if(mIsIntroduce) {
+            MainActivity_.intent(this).start();
+            finish();
+        }
+    }
 
     @AfterViews
     void init() {
@@ -50,6 +73,7 @@ public class IntroduceActivity extends FragmentActivity {
             mTxtNext.setText("FINISH");
             mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
         } else if(mViewPager.getCurrentItem() == mCount.length - 1) {
+            createSharedPre();
             MainActivity_.intent(this).start();
             finish();
         } else {
@@ -61,5 +85,16 @@ public class IntroduceActivity extends FragmentActivity {
     void setClickBack() {
         mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
         mTxtNext.setText("NEXT");
+    }
+
+    private void createSharedPre() {
+        SharedPreferences.Editor editor = getSharedPreferences("mydata", MODE_PRIVATE).edit();
+        editor.putBoolean("isIntroduced", true);
+        editor.commit();
+    }
+
+    private void getSharedPre() {
+        SharedPreferences sharedpreferences = getSharedPreferences("mydata", MODE_PRIVATE);
+        mIsIntroduce = sharedpreferences.getBoolean("isIntroduced",false);
     }
 }

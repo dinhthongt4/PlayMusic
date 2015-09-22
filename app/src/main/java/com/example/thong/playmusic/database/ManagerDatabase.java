@@ -7,15 +7,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.thong.playmusic.model.Album;
+import com.example.thong.playmusic.model.ChildMusicOnline;
+
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Created by thong on 04/09/2015.
  */
 public class ManagerDatabase {
 
+    private static final String TAG = "ManagerDatabase";
     private static final String DATABASE_NAME = "media_player";
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 2;
     private static final String TABLE_MEDIA_INFO = "tbl_media_info";
     private static final String TABLE_MEDIA_TYPE = "tbl_media_type";
     private static final String TABLE_MEDIA_GROUP = "tbl_media_group";
@@ -54,11 +59,10 @@ public class ManagerDatabase {
         mOpenHelper.close();
     }
 
-    public long insertMediaInfo(int id, String path, String name, int idType, String artist
+    public long insertMediaInfo(String path, String name, int idType, String artist
             , String singer, String duration
             , String imgPath, String description, String album, String copyRight) {
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_ID, id);
         cv.put(COLUMN_PATH, path);
         cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_ID_TYPE, idType);
@@ -77,7 +81,6 @@ public class ManagerDatabase {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ID_TYPE, idType);
         cv.put(COLUMN_TYPE_NAME, type);
-
         return mDb.insert(TABLE_MEDIA_TYPE, null, cv);
     }
 
@@ -89,15 +92,38 @@ public class ManagerDatabase {
         return mDb.insert(TABLE_MEDIA_GROUP, null, cv);
     }
 
-    public long insertMediaGroupName(int idGroup, String groupName) {
+    public long insertMediaGroupName(String groupName) {
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_ID_GROUP, idGroup);
         cv.put(COLUMN_GROUP_NAME, groupName);
-
-        return mDb.insert(TABLE_MEDIA_INFO, null, cv);
+        return mDb.insert(TABLE_MEDIA_GROUP_NAME, null, cv);
     }
 
-    public String getDataMediaInfo() {
+    public ArrayList<Album> getNameAlbum() {
+
+        ArrayList<Album> albumArrayList = new ArrayList<>();
+
+        String[] columns = new String[]{COLUMN_ID_GROUP, COLUMN_GROUP_NAME};
+        Cursor c = mDb.query(TABLE_MEDIA_GROUP_NAME, columns, null, null, null, null, null);
+        if(c == null) {
+            Log.v(TAG,"C = null");
+        }
+
+        int iIdAlbum = c.getColumnIndex(COLUMN_ID_GROUP);
+        int iNameAlbum = c.getColumnIndex(COLUMN_GROUP_NAME);
+
+        while (c.moveToNext()) {
+            Album album = new Album();
+            album.setIdAlbum( c.getInt(iIdAlbum));
+            album.setAlbumName(c.getString(iNameAlbum));
+            albumArrayList.add(album);
+        }
+        c.close();
+        return albumArrayList;
+    }
+
+    public ArrayList<ChildMusicOnline> getDataMediaInfo() {
+
+        ArrayList<ChildMusicOnline> childMusicOnlines = new ArrayList<>();
         String[] columns = new String[]{COLUMN_ID, COLUMN_PATH, COLUMN_NAME, COLUMN_ID_TYPE, COLUMN_ARTIST
                 , COLUMN_SINGER, COLUMN_DURATION, COLUMN_IMAGE_PATH, COLUMN_DESCRIPTION, COLUMN_ALBUM, COLUMN_COPY_RIGHT};
         Cursor c = mDb.query(TABLE_MEDIA_INFO, columns, null, null, null, null, null);
@@ -119,12 +145,78 @@ public class ManagerDatabase {
         int iCopyRight = c.getColumnIndex(COLUMN_COPY_RIGHT);
 
         while (c.moveToNext()) {
-            result = result + "id" + c.getString(iID) + "path" + c.getString(iPath) + "name" + c.getString(iName);
+            ChildMusicOnline childMusicOnline = new ChildMusicOnline();
+            childMusicOnline.setIdMusic(c.getInt(iID));
+            childMusicOnline.setUrlStream(c.getString(iPath));
+            childMusicOnline.setArtist(c.getString(iArtist));
+            childMusicOnline.setDuration(Long.parseLong(c.getString(iDuration)));
+            childMusicOnline.setTitle(c.getString(iName));
+            childMusicOnline.setUrlAvatar(c.getString(iImagePath));
+            childMusicOnlines.add(childMusicOnline);
+        }
+        c.close();
+        return childMusicOnlines;
+    }
+
+    public ChildMusicOnline getDataMediaInfo(int id) {
+
+        ChildMusicOnline childMusicOnline = null;
+        Cursor c = mDb.rawQuery("SELECT * FROM " + TABLE_MEDIA_INFO + " WHERE " + COLUMN_ID + "='" + id + "'", null);
+        if (c == null) {
+            Log.v("Cursor", "C is NULL");
         }
 
+        int iID = c.getColumnIndex(COLUMN_ID);
+        int iPath = c.getColumnIndex(COLUMN_PATH);
+        int iName = c.getColumnIndex(COLUMN_NAME);
+        int iIDType = c.getColumnIndex(COLUMN_ID_TYPE);
+        int iArtist = c.getColumnIndex(COLUMN_ARTIST);
+        int iSinger = c.getColumnIndex(COLUMN_SINGER);
+        int iDuration = c.getColumnIndex(COLUMN_DURATION);
+        int iImagePath = c.getColumnIndex(COLUMN_IMAGE_PATH);
+        int iDescription = c.getColumnIndex(COLUMN_DESCRIPTION);
+        int iAlbum = c.getColumnIndex(COLUMN_ALBUM);
+        int iCopyRight = c.getColumnIndex(COLUMN_COPY_RIGHT);
+
+        while (c.moveToNext()) {
+            childMusicOnline = new ChildMusicOnline();
+            childMusicOnline.setIdMusic(iID);
+            childMusicOnline.setUrlStream(c.getString(iPath));
+            childMusicOnline.setArtist(c.getString(iArtist));
+            childMusicOnline.setDuration(Long.parseLong(c.getString(iDuration)));
+            childMusicOnline.setTitle(c.getString(iName));
+            childMusicOnline.setUrlAvatar(c.getString(iImagePath));
+        }
         c.close();
-        Log.v("Result", result);
-        return result;
+        return childMusicOnline;
+    }
+
+    public int getIDAlbum(String groupName) {
+        int idAlbum = 0;
+
+        Cursor c = mDb.rawQuery("SELECT "+COLUMN_ID_GROUP+" FROM "+TABLE_MEDIA_GROUP_NAME+" WHERE "+COLUMN_GROUP_NAME+"='"+groupName+"'",null);
+        if (c == null) {
+            Log.v("Cursor", "C is NULL");
+        }
+
+        int iID = c.getColumnIndex(COLUMN_ID_GROUP);
+
+        while (c.moveToNext()) {
+            idAlbum = c.getInt(iID);
+        }
+        c.close();
+        return idAlbum;
+    }
+
+    public ArrayList<Integer> getListIdMusics(int id) {
+        ArrayList<Integer> idMusics = new ArrayList<>();
+        Cursor c = mDb.rawQuery("SELECT "+COLUMN_ID+" FROM "+TABLE_MEDIA_GROUP+" WHERE "+COLUMN_ID_GROUP+"='"+id+"'",null);
+        int iId = c.getColumnIndex(COLUMN_ID);
+        while (c.moveToNext()) {
+            idMusics.add(c.getInt(iId));
+        }
+        c.close();
+        return idMusics;
     }
 
     //---------------- class OpenHelper ------------------
@@ -138,13 +230,13 @@ public class ManagerDatabase {
         public void onCreate(SQLiteDatabase arg0) {
 
             arg0.execSQL("CREATE TABLE " + TABLE_MEDIA_INFO + " ("
-                    + COLUMN_ID + " INTEGER PRIMARY KEY, "
+                    + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COLUMN_PATH + " NVARCHAR(50) NOT NULL, "
-                    + COLUMN_NAME + " NVARCHAR(50) NOT NULL, "
-                    + COLUMN_ID_TYPE + " INTEGER NOT NULL, "
+                    + COLUMN_NAME + " NVARCHAR(50), "
+                    + COLUMN_ID_TYPE + " INTEGER, "
                     + COLUMN_ARTIST + " NVARCHAR(50), "
                     + COLUMN_SINGER + " NVARCHAR(50), "
-                    + COLUMN_DURATION + " VARCHAR(50) NOT NULL, "
+                    + COLUMN_DURATION + " VARCHAR(50), "
                     + COLUMN_IMAGE_PATH + " NVARCHAR(50), "
                     + COLUMN_DESCRIPTION + " TEXT, "
                     + COLUMN_ALBUM + " NVARCHAR(50), "
@@ -152,10 +244,10 @@ public class ManagerDatabase {
 
             arg0.execSQL("CREATE TABLE " + TABLE_MEDIA_TYPE + " ("
                     + COLUMN_ID_TYPE + " INTEGER PRIMARY KEY, "
-                    + COLUMN_TYPE_NAME + " VARCHAR(50) NOT NULL);");
+                    + COLUMN_TYPE_NAME + " VARCHAR(50));");
 
             arg0.execSQL("CREATE TABLE " + TABLE_MEDIA_GROUP_NAME + " ("
-                    + COLUMN_ID_GROUP + " INTEGER PRIMARY KEY, "
+                    + COLUMN_ID_GROUP + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COLUMN_GROUP_NAME + " NVARCHAR(50));");
 
             arg0.execSQL("CREATE TABLE " + TABLE_MEDIA_GROUP + " ("

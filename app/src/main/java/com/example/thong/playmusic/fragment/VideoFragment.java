@@ -3,11 +3,13 @@ package com.example.thong.playmusic.fragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.thong.playmusic.R;
+import com.example.thong.playmusic.activity.VideoViewActivity_;
 import com.example.thong.playmusic.adapter.ListVideoAdapter;
 import com.example.thong.playmusic.api.Api;
 import com.example.thong.playmusic.config.FieldFinal;
@@ -146,6 +148,13 @@ public class VideoFragment extends Fragment {
             @Override
             public void onClickLoadMore(String typeHeader, int typeItem, int headerID, int numberList) {
                 getVideosSearch("snippet", typeHeader, "video", numberList + 5, FieldFinal.KEY_YOUTUBE, typeHeader, mTypeHeader);
+            }
+        });
+
+        mStickyListHeadersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                VideoViewActivity_.intent(getActivity()).extra("id",mItems.get(i).getId().getVideoId()).start();
             }
         });
     }

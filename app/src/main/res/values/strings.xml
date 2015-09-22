@@ -3,4 +3,17 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="txt.next.introduce.activity">NEXT</string>
+    <string name="txt.back.introduce.activity">BACK</string>
+    <string name="edt.name.album.diaglog.fragment">Name Album</string>
+    <string name="edt.description.diaglog.fragment">Description</string>
+    <string name="txt.cancel.dialog.fragment">Cancel</string>
+    <string name="txt.submit.dialog.fragment">Submit</string>
+    <string name="txt.more.video.fragment">More</string>
+    <string name="txt.new.album">New Album</string>
+    <string name="txt.musics.tab.bar">Musics</string>
+    <string name="txt.albums.tab.bar">Albums</string>
+    <string name="txt.videos.tab.bar">Videos</string>
+    <string name="txt.online.tab.bar">Online</string>
+    <string name="txt.duration.video">0.00</string>
 </resources>

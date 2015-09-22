@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/layout.40"
         android:id="@+id/rlSearch"
-        android:background="#CFD8DC"
-        android:layout_marginBottom="5dp"
+        android:background="@color/bg.search"
+        android:layout_marginBottom="@dimen/margin.5"
         >
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/layout.30"
+            android:layout_height="@dimen/layout.30"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:src="@drawable/ic_search"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="@dimen/margin.10"
+            android:layout_marginEnd="@dimen/margin.10"
             android:id="@+id/imgSearch"
-            />
+            tools:ignore="ContentDescription" />
 
         <ProgressBar
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/layout.30"
+            android:layout_height="@dimen/layout.30"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="@dimen/margin.10"
+            android:layout_marginEnd="@dimen/margin.10"
             android:id="@+id/progressBarSearch"
             android:visibility="gone"
             />
@@ -35,10 +40,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/edtSearch"
-            android:textSize="13sp"
-            android:layout_marginLeft="10dp"
+            android:textSize="@dimen/text.size.13"
+            android:layout_marginLeft="@dimen/margin.10"
+            android:layout_marginStart="@dimen/margin.10"
             android:layout_toLeftOf="@id/imgSearch"
-            />
+            tools:ignore="RtlHardcoded,TextFields" />
     </RelativeLayout>
 
 

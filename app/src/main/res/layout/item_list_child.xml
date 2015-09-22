@@ -1,53 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="10dp"
-    android:background="#E6E6E6"
+    android:paddingBottom="@dimen/margin.10"
+    android:background="@color/bg.item.music"
     >
 
     <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/layout.50"
+        android:layout_height="@dimen/layout.50"
         android:id="@+id/imgAvatarMusic"
         android:src="@drawable/ic_media_player"
         android:scaleType="centerInside"
-        />
+        tools:ignore="ContentDescription" />
     <ImageView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="@dimen/layout.20"
+        android:layout_height="@dimen/layout.20"
         android:id="@+id/imgDownLoad"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="@dimen/margin.10"
+        android:layout_marginEnd="@dimen/margin.10"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:src="@drawable/ic_file_download_blue_grey_400_18dp"
-        />
+        tools:ignore="ContentDescription" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtNameMusic"
-        android:textSize="18sp"
-        android:text="Chi rieng minh anh"
+        android:textSize="@dimen/textsize.18"
         android:layout_toRightOf="@id/imgAvatarMusic"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/rlButton"
+        android:layout_marginLeft="@dimen/margin.10"
+        android:layout_marginTop="@dimen/margin.10"
+        android:layout_toLeftOf="@id/rlButton"
         android:maxLength="18"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:ignore="RelativeOverlap,RtlHardcoded" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtArtistMusic"
-        android:textSize="15sp"
-        android:text="Chi rieng minh anh"
+        android:textSize="@dimen/text.size.15"
         android:layout_toRightOf="@id/imgAvatarMusic"
-        android:layout_marginLeft="10dp"
-        android:layout_toLeftOf="@+id/rlButton"
+        android:layout_marginLeft="@dimen/margin.10"
+        android:layout_marginStart="@dimen/margin.10"
+        android:layout_toLeftOf="@id/rlButton"
         android:layout_below="@id/txtNameMusic"
         android:maxLength="23"
-        android:maxLines="1" />
+        android:maxLines="1"
+        tools:ignore="RtlHardcoded" />
 
 </RelativeLayout>

@@ -7,6 +7,10 @@ import com.google.gson.annotations.SerializedName;
  */
 public class ChildMusicOnline {
 
+    private boolean isOnline;
+
+    private int idMusic;
+
     @SerializedName(value = "streamable")
     private boolean streamAble;
 
@@ -27,6 +31,32 @@ public class ChildMusicOnline {
     private String artist;
 
     private long duration;
+
+    private String album;
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public int getIdMusic() {
+        return idMusic;
+    }
+
+    public void setIdMusic(int idMusic) {
+        this.idMusic = idMusic;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setIsOnline(boolean isOnline) {
+        this.isOnline = isOnline;
+    }
 
     public String getArtist() {
         return artist;

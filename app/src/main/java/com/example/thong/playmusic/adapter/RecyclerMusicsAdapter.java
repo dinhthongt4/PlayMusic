@@ -1,6 +1,10 @@
 package com.example.thong.playmusic.adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +22,11 @@ import java.util.ArrayList;
  */
 public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAdapter.ViewHolder> {
 
-    private final ArrayList<ChildMusicOnline> mMediaInfos;
+    private final ArrayList<ChildMusicOnline> mChildMusicOnlines;
     private OnItemClick mOnItemClick;
-
-    public RecyclerMusicsAdapter(ArrayList<ChildMusicOnline> mediaInfos) {
-        this.mMediaInfos = mediaInfos;
+    private static final String TAG = "RecyclerMusicsAdapter";
+    public RecyclerMusicsAdapter(ArrayList<ChildMusicOnline> childMusicOnlines) {
+        this.mChildMusicOnlines = childMusicOnlines;
     }
 
     @Override
@@ -34,13 +38,22 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        viewHolder.txtName.setText(mMediaInfos.get(i).getTitle());
-        viewHolder.txtArtist.setText(mMediaInfos.get(i).getArtist());
+        viewHolder.txtName.setText(mChildMusicOnlines.get(i).getTitle());
+        viewHolder.txtArtist.setText(mChildMusicOnlines.get(i).getArtist());
+        MediaMetadataRetriever metaRetriver = new MediaMetadataRetriever();
+        metaRetriver.setDataSource(mChildMusicOnlines.get(i).getUrlStream());
+        Log.v(TAG,mChildMusicOnlines.get(i).getUrlStream());
+        byte[] art = metaRetriver.getEmbeddedPicture();
+        if(art != null) {
+            Bitmap songImage = BitmapFactory
+                    .decodeByteArray(art, 0, art.length);
+                viewHolder.imgMediaPlayer.setImageBitmap(songImage);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mMediaInfos.size();
+        return mChildMusicOnlines.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

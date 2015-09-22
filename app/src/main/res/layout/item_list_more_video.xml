@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
+    android:paddingTop="@dimen/margin.10"
+    android:paddingBottom="@dimen/margin.10"
     >
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#A9A9F5"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        ></RelativeLayout>
+        android:layout_height="@dimen/layout.1"
+        android:background="@color/bg.header.video"
+        android:layout_marginRight="@dimen/margin.5"
+        android:layout_marginLeft="@dimen/margin.5"
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="More"
-        android:textColor="#fff"
-        android:textSize="18sp"
+        android:text="@string/txt.more.video.fragment"
+        android:textColor="@color/txt.default"
+        android:textSize="@dimen/textsize.18"
         android:id="@+id/txtMoreVideo"
         android:layout_centerHorizontal="true"
         />
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/layout.50"
+        android:layout_height="@dimen/layout.50"
         android:layout_centerHorizontal="true"
         android:src="@drawable/more"
         android:id="@+id/imgMoreVideo"
         android:layout_below="@id/txtMoreVideo"
-        />
+        tools:ignore="ContentDescription" />
 
 
     <ProgressBar
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/layout.50"
+        android:layout_height="@dimen/layout.50"
         android:layout_centerInParent="true"
         android:id="@+id/progressBar"
         android:visibility="gone"
@@ -45,10 +46,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#A9A9F5"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
+        android:layout_height="@dimen/layout.1"
+        android:background="@color/bg.header.video"
+        android:layout_marginRight="@dimen/margin.5"
+        android:layout_marginLeft="@dimen/margin.5"
         android:layout_alignParentBottom="true"
-        ></RelativeLayout>
+        />
 </RelativeLayout>

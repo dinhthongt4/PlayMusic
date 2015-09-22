@@ -1,9 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <com.google.android.youtube.player.YouTubePlayerView
-        android:id="@+id/youtube_view"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp" />
-</RelativeLayout>
+        android:layout_height="@dimen/layout.20"
+        android:background="@color/bg.youtube.view"
+        />
+
+        <com.google.android.youtube.player.YouTubePlayerView
+            android:id="@+id/youtube_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/layout.200"
+            android:layout_marginTop="@dimen/margin.20" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/layout.20"
+            android:background="@color/bg.youtube.view"
+            android:layout_below="@id/youtube_view"
+            />
+        <RelativeLayout
+            android:id="@+id/rlSetingYoutubeView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/layout.20"
+            android:layout_below="@id/youtube_view"
+            >
+
+            <ImageView
+                android:layout_width="@dimen/layout.20"
+                android:layout_height="@dimen/layout.20"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="@dimen/margin.15"
+                android:src="@drawable/ic_back_video"
+                tools:ignore="ContentDescription,RtlHardcoded"
+                android:id="@+id/imgBack"
+                />
+
+            <ImageView
+                android:layout_width="@dimen/layout.50"
+                android:layout_height="@dimen/layout.50"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_pause_video"
+                tools:ignore="ContentDescription"
+                android:id="@+id/imgPause"
+                />
+
+            <TextView
+                android:id="@+id/txtTimeCurrent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="@string/txt.duration.video"
+                android:textColor="@color/txt.default"
+                />
+
+            <ImageView
+                android:id="@+id/imgFullScreen"
+                android:layout_width="@dimen/layout.20"
+                android:layout_height="@dimen/layout.20"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="@dimen/margin.5"
+                android:layout_marginRight="@dimen/margin.5"
+                android:layout_marginEnd="@dimen/margin.5"
+                android:src="@drawable/ic_full_screen_video"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/txtDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="@dimen/margin.10"
+                android:layout_marginEnd="@dimen/margin.10"
+                android:layout_toLeftOf="@id/imgFullScreen"
+                android:text="@string/txt.duration.video"
+                android:textColor="@color/txt.default"
+                tools:ignore="RtlHardcoded" />
+
+            <SeekBar
+                android:id="@+id/seekBarVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@id/txtDuration"
+                android:layout_toRightOf="@id/txtTimeCurrent"
+                android:progressDrawable="@drawable/bg_seek_bar"
+                android:minHeight="5dip"
+                android:maxHeight="5dip"
+                tools:ignore="RtlHardcoded"/>
+        </RelativeLayout>
+    </RelativeLayout>
