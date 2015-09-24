@@ -12,10 +12,12 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/layout.120"
+        android:layout_height="@dimen/layout.150"
         android:id="@+id/imgAvatarAlbum"
-        android:src="@drawable/ic_avatar_album"
-        tools:ignore="ContentDescription" />
+        android:src="@drawable/bg_avatar_album"
+        tools:ignore="ContentDescription"
+        android:scaleType="centerCrop"
+        />
 
     <TextView
         android:layout_width="wrap_content"

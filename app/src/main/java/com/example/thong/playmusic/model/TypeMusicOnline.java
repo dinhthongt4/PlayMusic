@@ -1,3 +1,4 @@
+/*
 package com.example.thong.playmusic.model;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
@@ -5,9 +6,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+*/
 /**
  * Created by thong on 9/11/15.
- */
+ *//*
+
 public class TypeMusicOnline implements ParentObject {
 
 
@@ -59,3 +62,4 @@ public class TypeMusicOnline implements ParentObject {
         this.childMusicOnlines = childMusicOnlines;
     }
 }
+*/

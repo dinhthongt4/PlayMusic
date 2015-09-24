@@ -1,3 +1,4 @@
+/*
 package com.example.thong.playmusic.fragment;
 
 import android.support.v4.app.Fragment;
@@ -10,9 +11,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.bignerdranch.expandablerecyclerview.Listener.ExpandCollapseListener;
-import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.example.thong.playmusic.R;
-import com.example.thong.playmusic.adapter.RecyclerExpandableMusicsAdapter;
 import com.example.thong.playmusic.api.Api;
 import com.example.thong.playmusic.config.FieldFinal;
 import com.example.thong.playmusic.media.player.ManagerPlay;
@@ -31,9 +30,11 @@ import java.util.ArrayList;
 
 import retrofit.RestAdapter;
 
+*/
 /**
  * Created by thong on 9/11/15.
- */
+ *//*
+
 
 @EFragment(R.layout.fragment_musics_online)
 public class MusicsOnlineFragment extends Fragment {
@@ -205,3 +206,4 @@ public class MusicsOnlineFragment extends Fragment {
         managerPlay.playSoundOnline(childMusicOnlines, position);
     }
 }
+*/

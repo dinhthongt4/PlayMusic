@@ -39,7 +39,7 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         viewHolder.txtName.setText(mChildMusicOnlines.get(i).getTitle());
-        viewHolder.txtArtist.setText(mChildMusicOnlines.get(i).getArtist());
+        viewHolder.txtArtist.setText("by " +mChildMusicOnlines.get(i).getArtist());
         MediaMetadataRetriever metaRetriver = new MediaMetadataRetriever();
         metaRetriver.setDataSource(mChildMusicOnlines.get(i).getUrlStream());
         Log.v(TAG,mChildMusicOnlines.get(i).getUrlStream());

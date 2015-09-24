@@ -28,6 +28,16 @@ public class ManagerPlay {
     private int numberMedia;
     private boolean mIsPause;
     private OnSuccessPlayer mOnSuccessPlayer;
+    private boolean mIsRepeat;
+    private Context mContext;
+
+    public boolean isRepeat() {
+        return mIsRepeat;
+    }
+
+    public void setIsRepeat(boolean isRepeat) {
+        this.mIsRepeat = isRepeat;
+    }
 
     public boolean getIsPause() {
         return mIsPause;
@@ -77,12 +87,7 @@ public class ManagerPlay {
             e.printStackTrace();
         }
 
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                onNext(context);
-            }
-        });
+        setListener(context);
     }
 
     public void playSound(final Context context,int position) {
@@ -108,12 +113,7 @@ public class ManagerPlay {
             e.printStackTrace();
         }
 
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                onNext(context);
-            }
-        });
+        setListener(context);
     }
 
     private void playSound(final Context context) {
@@ -137,12 +137,7 @@ public class ManagerPlay {
             e.printStackTrace();
         }
 
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                onNext(context);
-            }
-        });
+       setListener(context);
     }
 
     public void playSoundOnline(ArrayList<ChildMusicOnline> childMusicOnlines, final int position) {
@@ -267,6 +262,20 @@ public class ManagerPlay {
 
     public ChildMusicOnline getCurrentInfoMediaPlayer() {
         return mChildMusicOnlines.get(numberMedia);
+    }
+
+    private void setListener(final Context context) {
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+
+                if(isRepeat()) {
+                    mediaPlayer.start();
+                } else {
+                    onNext(context);
+                }
+            }
+        });
     }
 
     public interface OnSuccessPlayer {

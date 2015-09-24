@@ -3,5 +3,5 @@
     <stroke android:color="#0489B1"
         android:width="1dp"
         />
-    <solid android:color="#cccccccc"/>
+    <solid android:color="@color/bg.header.main.activity"/>
 </shape>

@@ -1,3 +1,4 @@
+/*
 package com.example.thong.playmusic.adapter;
 
 import android.content.Context;
@@ -9,15 +10,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
-import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
+import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.model.ChildMusicOnline;
 import com.example.thong.playmusic.model.TypeMusicOnline;
 import java.util.List;
 
+*/
 /**
  * Created by thong on 9/11/15.
- */
+ *//*
+
 public class RecyclerExpandableMusicsAdapter extends ExpandableRecyclerAdapter<RecyclerExpandableMusicsAdapter.ParentViewHolder,RecyclerExpandableMusicsAdapter.ChildViewHolder> {
 
     private OnChildItemClick mOnChildItemClick;
@@ -26,7 +29,7 @@ public class RecyclerExpandableMusicsAdapter extends ExpandableRecyclerAdapter<R
         mOnChildItemClick = onChildItemClick;
     }
 
-    public RecyclerExpandableMusicsAdapter(Context context, List<ParentObject> parentItemList) {
+    public RecyclerExpandableMusicsAdapter(Context context, List<ParentListItem> parentItemList) {
         super(context, parentItemList);
     }
 
@@ -98,3 +101,4 @@ public class RecyclerExpandableMusicsAdapter extends ExpandableRecyclerAdapter<R
         void onClick(int position);
     }
 }
+*/

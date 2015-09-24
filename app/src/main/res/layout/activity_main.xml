@@ -19,11 +19,11 @@
     <android.support.v4.view.ViewPager
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_below="@id/tabBar"
         android:layout_marginLeft="@dimen/margin.10"
-        android:layout_marginRight="@dimen/margin.10"
-        android:layout_marginTop="@dimen/margin.10"
         android:id="@+id/viewPager"
+        android:layout_marginRight="@dimen/margin.10"
+        android:layout_below="@id/tabBar"
+        android:layout_marginTop="@dimen/margin.10"
         />
 
     <RelativeLayout
@@ -34,19 +34,20 @@
         android:id="@+id/rlPlayMusic"
         >
 
-        <com.example.thong.playmusic.widget.CircleImageView
+        <ImageView
             android:layout_width="@dimen/layout.50"
             android:layout_height="@dimen/layout.50"
-            android:layout_marginLeft="@dimen/margin.10"
-            android:layout_marginStart="@dimen/margin.10"
             android:layout_centerVertical="true"
             android:id="@+id/imgMediaPlayer"
-            android:scaleType="center"
-            android:src="@drawable/ic_disk1"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_avatar_music"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            tools:ignore="ContentDescription"
             />
 
         <RelativeLayout
-            android:layout_width="@dimen/layout.150"
+            android:layout_width="130dp"
             android:layout_height="match_parent"
             android:id="@+id/rlButton"
             android:layout_alignParentRight="true"
@@ -61,7 +62,7 @@
                 android:id="@+id/imgBack"
                 android:layout_marginLeft="@dimen/margin.10"
                 android:layout_marginStart="@dimen/margin.10"
-                android:src="@drawable/ic_back"
+                android:background="@drawable/ic_custom_back_selected"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -82,40 +83,57 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="@dimen/margin.10"
                 android:layout_marginEnd="@dimen/margin.10"
-                android:src="@drawable/ic_next"
+                android:background="@drawable/ic_custom_next_selected"
                 tools:ignore="ContentDescription" />
 
         </RelativeLayout>
+
+        <ImageView
+            android:layout_width="@dimen/layout.25"
+            android:layout_height="@dimen/layout.25"
+            android:id="@+id/imgRepeat"
+            android:src="@drawable/ic_repeat"
+            android:layout_toLeftOf="@id/rlButton"
+            android:layout_marginTop="17.5dp"
+            android:layout_marginRight="@dimen/margin.5"
+            android:layout_marginLeft="@dimen/margin.5"
+            tools:ignore="ContentDescription" />
+
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txtNameMediaPlayer"
             android:textSize="@dimen/text.size.15"
-            android:layout_toRightOf="@id/imgMediaPlayer"
             android:layout_marginLeft="@dimen/margin.10"
             android:layout_marginStart="@dimen/margin.10"
             android:layout_marginTop="@dimen/margin.10"
-            android:layout_toLeftOf="@+id/rlButton"
+            android:layout_toLeftOf="@+id/imgRepeat"
             android:textColor="#fff"
             android:maxLength="18"
             android:ellipsize="end"
             android:maxLines="1"
             android:textStyle="bold"
-            tools:ignore="RtlHardcoded" />
+            tools:ignore="RtlHardcoded"
+            android:layout_toRightOf="@id/imgMediaPlayer"
+            android:text="@string/txt.admin.app"
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txtArtistMediaPlayer"
             android:textSize="@dimen/text.size.13"
-            android:layout_toRightOf="@id/imgMediaPlayer"
             android:layout_marginLeft="@dimen/margin.10"
             android:layout_marginStart="@dimen/margin.10"
-            android:layout_toLeftOf="@+id/rlButton"
+            android:layout_toLeftOf="@+id/imgRepeat"
             android:layout_below="@id/txtNameMediaPlayer"
             android:textColor="@color/txt.default"
             android:maxLength="23"
             android:maxLines="1"
-            tools:ignore="RtlHardcoded" />
+            tools:ignore="RtlHardcoded"
+            android:layout_toRightOf="@id/imgMediaPlayer"
+            android:text="@string/txt.artist.app"
+            />
     </RelativeLayout>
 
 </RelativeLayout>

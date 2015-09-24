@@ -14,6 +14,8 @@ import com.example.thong.playmusic.model.ChildMusicOnline;
 import com.example.thong.playmusic.service.MediaPlayerService_;
 import com.example.thong.playmusic.widget.CircleImageView;
 import com.example.thong.playmusic.widget.TabBar;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 
 import org.androidannotations.annotations.AfterViews;
@@ -30,7 +32,7 @@ public class MainActivity extends FragmentActivity {
     private ViewPagerMainAdapter mViewPagerMainAdapter;
 
     @ViewById(R.id.imgMediaPlayer)
-    CircleImageView mImgMediaPlayer;
+    ImageView mImgMediaPlayer;
 
     @ViewById(R.id.txtNameMediaPlayer)
     TextView mTxtNameMediaPlayer;
@@ -47,9 +49,15 @@ public class MainActivity extends FragmentActivity {
     @ViewById(R.id.tabBar)
     TabBar mTabBar;
 
+    @ViewById(R.id.imgRepeat)
+    ImageView mImgRepeat;
+
     @AfterViews
     public void init() {
-        Intent intent  = new Intent(this, MediaPlayerService_.class);
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                .build();
+        ImageLoader.getInstance().init(config);
+        Intent intent = new Intent(this, MediaPlayerService_.class);
         startService(intent);
         mManagerPlay = ManagerPlay.getInstance();
         setListener();
@@ -63,10 +71,7 @@ public class MainActivity extends FragmentActivity {
     @Click(R.id.imgPause)
     void listenerPause() {
 
-//        Intent intent = new Intent(this, VideoViewActivity_.class);
-//        startActivity(intent);
-
-        if(mManagerPlay.getIsPause()) {
+        if (mManagerPlay.getIsPause()) {
             mImgPause.setImageResource(R.drawable.ic_pause);
             mManagerPlay.onStart();
             mManagerPlay.setIsPause(false);
@@ -87,6 +92,20 @@ public class MainActivity extends FragmentActivity {
         mManagerPlay.onBack(this);
     }
 
+    @Click(R.id.imgRepeat)
+    void listenerRepeat() {
+        if(mManagerPlay.getListMusics() != null) {
+            if(mManagerPlay.isRepeat()) {
+                mManagerPlay.setIsRepeat(false);
+                mImgRepeat.setImageResource(R.drawable.ic_repeat);
+            } else {
+                mManagerPlay.setIsRepeat(true);
+                mImgRepeat.setImageResource(R.drawable.icon_repeat_selected);
+            }
+        }
+     }
+
+
     // listener for media player
     private void setListener() {
 
@@ -94,11 +113,13 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onSuccess(ChildMusicOnline childMusicOnline) {
 
-                mTxtNameMediaPlayer.setText(checkLimitText(childMusicOnline.getTitle(),15));
-                mTxtArtistMediaPlayer.setText(checkLimitText(childMusicOnline.getArtist(),20));
+                mTxtNameMediaPlayer.setText(checkLimitText(childMusicOnline.getTitle(), 15));
+                mTxtArtistMediaPlayer.setText(checkLimitText(childMusicOnline.getArtist(), 20));
                 mManagerPlay.setIsPause(false);
                 mImgPause.setImageResource(R.drawable.ic_pause);
-                mImgMediaPlayer.setImageResource(R.drawable.ic_disk1);
+                if (childMusicOnline.getUrlAvatar() != null) {
+                    ImageLoader.getInstance().displayImage(childMusicOnline.getUrlAvatar(), mImgMediaPlayer);
+                }
             }
         });
 
@@ -130,12 +151,12 @@ public class MainActivity extends FragmentActivity {
     // check limit of textView
     private String checkLimitText(String s, int limit) {
 
-        if(s == null) {
+        if (s == null) {
             s = "";
         }
 
-        if(s.length() > limit) {
-            s = s.substring(0,limit);
+        if (s.length() > limit) {
+            s = s.substring(0, limit);
             s = s + "...";
         }
 
@@ -147,7 +168,7 @@ public class MainActivity extends FragmentActivity {
 
             mTxtNameMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getTitle());
             mTxtArtistMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getArtist());
-            if(mManagerPlay.getIsPause()) {
+            if (mManagerPlay.getIsPause()) {
                 mImgPause.setImageResource(R.drawable.ic_play);
             } else {
                 mImgPause.setImageResource((R.drawable.ic_pause));
