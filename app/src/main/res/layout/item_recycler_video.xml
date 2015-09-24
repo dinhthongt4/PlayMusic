@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_item_recycler">
+
+    <ImageView
+        android:id="@+id/imgThumbnailVideo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout.150"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgThumbnailVideo"
+        android:background="@color/bg.header.main.activity"
+        >
+
+        <TextView
+            android:id="@+id/txtNameVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My love"
+            android:textColor="@color/txt.default"
+            android:textSize="@dimen/text.size.15"
+            android:layout_marginLeft="@dimen/margin.10"
+            />
+
+        <TextView
+            android:id="@+id/txtNameChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtNameVideo"
+            android:text="West life"
+            android:textColor="@color/txt.chanel.video"
+            android:textSize="@dimen/text.size.13"
+            android:layout_marginLeft="@dimen/margin.10"/>
+    </RelativeLayout>
+</RelativeLayout>

@@ -7,18 +7,27 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.example.thong.playmusic.R;
+import com.example.thong.playmusic.adapter.RecyclerVideoAdapter;
+import com.example.thong.playmusic.adapter.RecyclerVideoSameAdapter;
+import com.example.thong.playmusic.api.Api;
 import com.example.thong.playmusic.config.FieldFinal;
+import com.example.thong.playmusic.model.Item;
+import com.example.thong.playmusic.model.ListVideos;
+import com.example.thong.playmusic.widget.SpacesItemDecoration;
 import com.example.thong.playmusic.widget.VideoControllerView;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -26,9 +35,11 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,6 +49,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+
+import retrofit.RestAdapter;
 
 /**
  * Created by thong on 9/15/15.
@@ -46,11 +60,12 @@ import java.net.URL;
 @EActivity(R.layout.activity_video_view)
 public class VideoViewActivity extends Activity implements VideoControllerView.MediaPlayerControl{
 
-
     private static final String TAG = "VideoViewActivity";
     private final String BASE_URL = "http://keepvid.com/?url=https://www.youtube.com/watch?v=";
     private VideoControllerView mVideoControllerView;
     private int mVideoDuration;
+    private ArrayList<Item> mItems;
+    private RecyclerVideoSameAdapter mRecyclerVideoSameAdapter;
 
     @ViewById(R.id.video_detail)
     VideoView mVideoView;
@@ -61,17 +76,42 @@ public class VideoViewActivity extends Activity implements VideoControllerView.M
     @ViewById(R.id.rlRecyclerVideoSame)
     RecyclerView mRecyclerViewVideo;
 
+    @ViewById(R.id.progressBar)
+    ProgressBar mProgressBar;
+
     @Extra("id")
     String mVideoId;
+
+    @Extra("url")
+    String mUrlImage;
+
+    @Extra("name")
+    String mNameVideo;
+
+    @Extra("channel")
+    String mChanelVideo;
+
+    @ViewById(R.id.txtNameVideo)
+    TextView mTxtNameVideo;
 
     @AfterViews
     void init() {
         mVideoControllerView = new VideoControllerView(this,false);
         RequestTask requestTask = new RequestTask();
-        requestTask.execute(BASE_URL+mVideoId);
+        requestTask.execute(BASE_URL + mVideoId);
         initMedia();
+        mRecyclerViewVideo.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerViewVideo.setLayoutManager(linearLayoutManager);
+        mItems = new ArrayList<>();
+        int spacingItem = getResources().getDimensionPixelSize(R.dimen.margin_5);
+        mRecyclerViewVideo.addItemDecoration(new SpacesItemDecoration(spacingItem));
+        mRecyclerVideoSameAdapter = new RecyclerVideoSameAdapter(mItems);
+        mRecyclerViewVideo.setAdapter(mRecyclerVideoSameAdapter);
+        getVideosSearch("snippet", mNameVideo, "video", 10, FieldFinal.KEY_YOUTUBE);
+        mTxtNameVideo.setText(mNameVideo);
+        setListener();
     }
-
 
     private void initMedia() {
         mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -82,8 +122,26 @@ public class VideoViewActivity extends Activity implements VideoControllerView.M
                 mVideoControllerView.setMediaPlayer(VideoViewActivity.this);
                 mVideoControllerView.setAnchorView(mRlParentVideo);
                 mVideoControllerView.show();
+                mVideoControllerView.setUrlThumbnail(mUrlImage);
             }
         });
+    }
+
+    @UiThread
+    void setUIVideo() {
+        mRecyclerVideoSameAdapter.notifyDataSetChanged();
+    }
+
+    @Background
+    void getVideosSearch(String path, String search, String type, int maxResults, String key) {
+
+        int positionSearch = 0;
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("https://www.googleapis.com").build();
+        Api getDataAPI = restAdapter.create(Api.class);
+        ListVideos listVideos = getDataAPI.getVideoSearch(path, search, type, maxResults, key);
+        mItems.addAll(positionSearch, listVideos.getItems());
+        setUIVideo();
     }
 
     @Override
@@ -128,29 +186,37 @@ public class VideoViewActivity extends Activity implements VideoControllerView.M
     }
 
     @Override
-    public boolean canPause() {
-        return false;
-    }
-
-    @Override
     public void fullScreenToggle() {
 
     }
 
-    @Override
-    public void playNormalVideo() {
-
-    }
-
-    @Override
-    public void playDoubleSpeedVideo() {
-
+    private void setListener() {
+        mRecyclerVideoSameAdapter.setOnItemClickListener(new RecyclerVideoSameAdapter.OnItemClickListener() {
+            @Override
+            public void OnClick(int position) {
+                RequestTask requestTask = new RequestTask();
+                mNameVideo = mItems.get(position).getSnippet().getTitle();
+                mUrlImage = mItems.get(position).getSnippet().getThumbnail().getHigh().getUrl();
+                mVideoId = mItems.get(position).getId().getVideoId();
+                requestTask.execute(BASE_URL + mVideoId);
+                if(mVideoView.isPlaying()) {
+                    mVideoView.stopPlayback();
+                }
+                mVideoControllerView.removeAllViews();
+                mVideoControllerView = null;
+                mVideoControllerView = new VideoControllerView(getApplicationContext(),false);
+                mItems.clear();
+                getVideosSearch("snippet", mNameVideo, "video", 10, FieldFinal.KEY_YOUTUBE);
+                initMedia();
+            }
+        });
     }
 
     class RequestTask extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -202,6 +268,7 @@ public class VideoViewActivity extends Activity implements VideoControllerView.M
                 }
                 mVideoView.setVideoPath(url);
             }
+            mProgressBar.setVisibility(View.GONE);
         }
     }
 }

@@ -16,16 +16,6 @@
         android:id="@+id/tabBar"
         />
 
-    <android.support.v4.view.ViewPager
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="@dimen/margin.10"
-        android:id="@+id/viewPager"
-        android:layout_marginRight="@dimen/margin.10"
-        android:layout_below="@id/tabBar"
-        android:layout_marginTop="@dimen/margin.10"
-        />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout.50"
@@ -135,5 +125,16 @@
             android:text="@string/txt.artist.app"
             />
     </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/margin.10"
+        android:id="@+id/viewPager"
+        android:layout_marginRight="@dimen/margin.10"
+        android:layout_below="@id/tabBar"
+        android:layout_marginTop="@dimen/margin.10"
+        android:layout_above="@id/rlPlayMusic"
+        />
 
 </RelativeLayout>

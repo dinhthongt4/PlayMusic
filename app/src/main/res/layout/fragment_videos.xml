@@ -47,10 +47,10 @@
             tools:ignore="RtlHardcoded,TextFields" />
     </RelativeLayout>
 
-
-    <se.emilsjolander.stickylistheaders.StickyListHeadersListView
-        android:layout_below="@id/rlSearch"
-        android:id="@+id/list_video"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_video"
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/rlSearch"/>
 </RelativeLayout>

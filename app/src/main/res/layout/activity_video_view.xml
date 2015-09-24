@@ -8,38 +8,65 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:id="@+id/rlParentVideo"
-        tools:ignore="UselessParent">
-
+        tools:ignore="UselessParent"
+        android:background="#000"
+        >
         <VideoView
             android:id="@+id/video_detail"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentTop="true" />
+        <ProgressBar
+            android:layout_width="@dimen/layout.50"
+            android:layout_height="@dimen/layout.50"
+            android:layout_centerInParent="true"
+            android:id="@+id/progressBar"
+            />
         </RelativeLayout>
-    <TextView
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/layout.40"
+        android:layout_height="50dp"
+        android:id="@+id/rlHeader"
         android:layout_below="@id/rlParentVideo"
-        android:text="@string/txt.same.same"
-        android:textSize="@dimen/text.size.20"
-        android:gravity="center"
-        android:layout_marginTop="@dimen/margin.5"
-        android:layout_marginBottom="@dimen/margin.5"
         android:background="@color/bg.header.video"
-        android:textColor="@color/txt.default"
-        android:layout_marginLeft="@dimen/margin.10"
-        android:layout_marginRight="@dimen/margin.10"
-        android:id="@+id/txtHeader"
-        />
+        >
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:text="@string/txt.same.video"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:id="@+id/txtSameVideo"
+            android:background="@drawable/bg_txt_same_video"
+            android:layout_marginRight="@dimen/margin.10"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtNameVideo"
+            android:layout_marginLeft="@dimen/margin.10"
+            android:layout_toLeftOf="@id/txtSameVideo"
+            android:layout_marginTop="@dimen/margin.10"
+            />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout.1"
+        android:background="@color/bg.seek.bar.second.progress"
+        android:layout_alignParentBottom="true"
+        ></RelativeLayout>
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/txtHeader"
+        android:layout_below="@id/rlHeader"
         android:layout_marginRight="@dimen/margin.10"
         android:layout_marginLeft="@dimen/margin.10"
         android:id="@+id/rlRecyclerVideoSame"
         />
-
     </RelativeLayout>

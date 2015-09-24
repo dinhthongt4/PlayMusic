@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.thong.playmusic.R;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.lang.ref.WeakReference;
 import java.util.Formatter;
@@ -45,6 +46,7 @@ public class VideoControllerView extends FrameLayout implements View.OnClickList
     private int state = 0;
     private boolean check_speed_x;
     private float mDoubleSpeed = 1.0f;
+    private ImageView mImgThumbnailVideo;
 
 
     StringBuilder mFormatBuilder;
@@ -77,6 +79,10 @@ public class VideoControllerView extends FrameLayout implements View.OnClickList
         Log.i(TAG, TAG);
     }
 
+    public void setIsShowing(boolean showing) {
+        mShowing = showing;
+    }
+
     @Override
     public void onFinishInflate() {
         super.onFinishInflate();
@@ -97,7 +103,6 @@ public class VideoControllerView extends FrameLayout implements View.OnClickList
      */
     public void setAnchorView(ViewGroup view) {
         mAnchor = view;
-
         LayoutParams frameParams = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -146,10 +151,15 @@ public class VideoControllerView extends FrameLayout implements View.OnClickList
         return super.onKeyDown(keyCode, event);
     }
 
+    public void setUrlThumbnail(String url) {
+        ImageLoader.getInstance().displayImage(url,mImgThumbnailVideo);
+    }
+
     private void initControllerView(View v) {
         mPauseButton = (ImageButton) v.findViewById(R.id.pause);
         mFullButton = (ImageView) v.findViewById(R.id.zoomscreen);
         mLinearController = (LinearLayout) v.findViewById(R.id.linearController);
+        mImgThumbnailVideo = (ImageView) v.findViewById(R.id.imgThumbnailVideo);
         if (mPauseButton != null) {
             mPauseButton.requestFocus();
             mPauseButton.setOnClickListener(this);
@@ -199,7 +209,6 @@ public class VideoControllerView extends FrameLayout implements View.OnClickList
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     Gravity.BOTTOM
             );
-
             mAnchor.addView(this, tlp);
             mShowing = true;
         }
@@ -298,6 +307,7 @@ public class VideoControllerView extends FrameLayout implements View.OnClickList
                 state = 0;
             } else {
                 mPlayer.start();
+                mImgThumbnailVideo.setVisibility(GONE);
                 state = 1;
             }
         }
@@ -398,10 +408,7 @@ public class VideoControllerView extends FrameLayout implements View.OnClickList
         void seekTo(int pos);
         boolean isPlaying();
         int getBufferPercentage();
-        boolean canPause();
         void fullScreenToggle();
-        void playNormalVideo();
-        void playDoubleSpeedVideo();
     }
 
     private static class MessageHandler extends Handler {

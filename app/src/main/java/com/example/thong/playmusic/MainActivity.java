@@ -12,7 +12,6 @@ import com.example.thong.playmusic.adapter.ViewPagerMainAdapter;
 import com.example.thong.playmusic.media.player.ManagerPlay;
 import com.example.thong.playmusic.model.ChildMusicOnline;
 import com.example.thong.playmusic.service.MediaPlayerService_;
-import com.example.thong.playmusic.widget.CircleImageView;
 import com.example.thong.playmusic.widget.TabBar;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;

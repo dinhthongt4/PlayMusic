@@ -1,20 +1,23 @@
 package com.example.thong.playmusic.fragment;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.activity.VideoViewActivity_;
-import com.example.thong.playmusic.adapter.ListVideoAdapter;
+import com.example.thong.playmusic.adapter.RecyclerVideoAdapter;
 import com.example.thong.playmusic.api.Api;
 import com.example.thong.playmusic.config.FieldFinal;
 import com.example.thong.playmusic.model.Item;
 import com.example.thong.playmusic.model.ListVideos;
+import com.example.thong.playmusic.widget.SpacesItemDecoration;
+import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 
 
 import org.androidannotations.annotations.AfterViews;
@@ -27,9 +30,6 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 
 import retrofit.RestAdapter;
-import retrofit.http.GET;
-import retrofit.http.Query;
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 /**
  * Created by thong on 9/7/15.
@@ -42,11 +42,8 @@ public class VideoFragment extends Fragment {
     private static final String TAG = "VideoFragment";
     private static final String SEARCH_API = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=mot%20nha&type=video&key=AIzaSyBtEYk0NLi1DcEjYx8Z1TDDWulmmTajV4s";
     private ArrayList<Item> mItems;
-    private ListVideoAdapter mListVideoAdapter;
     private int mTypeHeader = 3;
-
-    @ViewById(R.id.list_video)
-    StickyListHeadersListView mStickyListHeadersListView;
+    private RecyclerVideoAdapter mRecyclerVideoAdapter;
 
     @ViewById(R.id.edtSearch)
     EditText mEdtSearch;
@@ -57,11 +54,23 @@ public class VideoFragment extends Fragment {
     @ViewById(R.id.progressBarSearch)
     ProgressBar mProgressBarSearch;
 
+    @ViewById(R.id.recycler_video)
+    RecyclerView mRecyclerVideo;
+
     @AfterViews
     public void init() {
         mItems = new ArrayList<>();
-        mListVideoAdapter = new ListVideoAdapter(mItems, getActivity());
-        mStickyListHeadersListView.setAdapter(mListVideoAdapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerVideo.setLayoutManager(layoutManager);
+        mRecyclerVideoAdapter = new RecyclerVideoAdapter(mItems);
+        StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration(mRecyclerVideoAdapter);
+        int spacingItem = getResources().getDimensionPixelSize(R.dimen.margin_10);
+        mRecyclerVideo.addItemDecoration(new SpacesItemDecoration(spacingItem));
+        mRecyclerVideo.addItemDecoration(headersDecor);
+        mRecyclerVideo.setAdapter(mRecyclerVideoAdapter);
+
+
+
         setListener();
         getVideosSearch("snippet", "Remix", "video", 5, FieldFinal.KEY_YOUTUBE, "Remix", 0);
         getVideosSearch("snippet", "Zing mp3", "video", 5, FieldFinal.KEY_YOUTUBE, "Zing mp3", 1);
@@ -71,13 +80,12 @@ public class VideoFragment extends Fragment {
 
     @UiThread
     void setUIVideo() {
-        mListVideoAdapter.notifyDataSetChanged();
+        mRecyclerVideoAdapter.notifyDataSetChanged();
     }
 
     @UiThread
     void setUIVideoSearch() {
-        mListVideoAdapter.notifyDataSetChanged();
-        mStickyListHeadersListView.smoothScrollToPosition(0);
+        mRecyclerVideoAdapter.notifyDataSetChanged();
         mProgressBarSearch.setVisibility(View.GONE);
         mImgSearch.setVisibility(View.VISIBLE);
     }
@@ -105,26 +113,18 @@ public class VideoFragment extends Fragment {
         Api getDataAPI = restAdapter.create(Api.class);
         ListVideos listVideos = getDataAPI.getVideoSearch(path, search, type, maxResults, key);
         for (int i = 0; i < listVideos.getItems().size(); i++) {
+            Log.v(TAG,typeMusic);
             listVideos.getItems().get(i).setType(typeMusic);
             listVideos.getItems().get(i).setHeaderID(headerId);
             listVideos.getItems().get(i).setTypeItem(0);
         }
         mItems.addAll(positionSearch, listVideos.getItems());
 
-        Item item = new Item();
-        item.setType(typeMusic);
-        item.setHeaderID(headerId);
-        item.setTypeItem(1);
-        item.setNumberList(maxResults);
-        mItems.add(maxResults + positionSearch, item);
-
         if (maxResults > 5) {
             setUIVideo();
         } else {
             setUIVideoSearch();
         }
-
-
     }
 
     public int removeList(String typeMusic) {
@@ -143,18 +143,15 @@ public class VideoFragment extends Fragment {
         return positionSearch;
     }
 
-    void setListener() {
-        mListVideoAdapter.setOnLoadMoreListener(new ListVideoAdapter.OnLoadMoreListener() {
+    private void setListener() {
+        mRecyclerVideoAdapter.setOnItemClickListener(new RecyclerVideoAdapter.OnItemClickListener() {
             @Override
-            public void onClickLoadMore(String typeHeader, int typeItem, int headerID, int numberList) {
-                getVideosSearch("snippet", typeHeader, "video", numberList + 5, FieldFinal.KEY_YOUTUBE, typeHeader, mTypeHeader);
-            }
-        });
-
-        mStickyListHeadersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                VideoViewActivity_.intent(getActivity()).extra("id",mItems.get(i).getId().getVideoId()).start();
+            public void onClick(int position) {
+                VideoViewActivity_.intent(getActivity()).extra("id",mItems.get(position).getId().getVideoId())
+                        .extra("url",mItems.get(position).getSnippet().getThumbnail().getHigh().getUrl())
+                        .extra("name",mItems.get(position).getSnippet().getTitle())
+                        .extra("channel",mItems.get(position).getSnippet().getChannelTitle())
+                        .start();
             }
         });
     }
