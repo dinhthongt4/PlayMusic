@@ -20,6 +20,28 @@
         android:src="@drawable/ic_avatar_music"
         android:scaleType="centerInside"
         tools:ignore="ContentDescription" />
+    
+
+
+    <ImageView
+        android:layout_width="@dimen/layout.20"
+        android:layout_height="@dimen/layout.20"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/margin.10"
+        android:id="@+id/imgDownload"
+        android:src="@drawable/ic_download"
+        android:visibility="invisible"
+        />
+
+    <ImageView
+        android:layout_width="@dimen/layout.20"
+        android:layout_height="@dimen/layout.20"
+        android:id="@+id/imgAddAlbum"
+        android:layout_marginRight="@dimen/margin.10"
+        android:layout_marginTop="@dimen/margin.10"
+        android:src="@drawable/ic_add_album"
+        android:layout_toLeftOf="@id/imgDownload"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -29,14 +51,14 @@
         android:layout_toRightOf="@id/imgMediaPlayer"
         android:layout_marginLeft="@dimen/margin.10"
         android:layout_marginTop="@dimen/margin.10"
-        android:layout_toLeftOf="@+id/rlButton"
+        android:layout_toLeftOf="@+id/imgAddAlbum"
         android:textColor="@color/txt.default"
-        android:maxLength="18"
         android:ellipsize="end"
         android:maxLines="1"
         android:textStyle="bold"
-        tools:ignore="RtlHardcoded,UnknownIdInLayout" />
-
+        tools:ignore="RtlHardcoded,UnknownIdInLayout"
+        android:layout_marginRight="@dimen/margin.10"
+        />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,10 +66,11 @@
         android:textSize="@dimen/text.size.15"
         android:layout_toRightOf="@id/imgMediaPlayer"
         android:layout_marginLeft="@dimen/margin.10"
-        android:layout_toLeftOf="@+id/rlButton"
+        android:layout_toLeftOf="@+id/imgAddAlbum"
         android:layout_below="@id/txtNameMediaPlayer"
         android:textColor="@color/txt.default"
-        android:maxLength="23"
         android:maxLines="1"
-        tools:ignore="RtlHardcoded,UnknownIdInLayout" />
+        tools:ignore="RtlHardcoded,UnknownIdInLayout"
+        android:layout_marginRight="@dimen/margin.10"/>
+
 </RelativeLayout>

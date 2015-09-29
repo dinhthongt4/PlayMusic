@@ -69,7 +69,6 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.bignerdranch.android:expandablerecyclerview:2.0.0-SNAPSHOT'
     compile files('/libs/YouTubeAndroidPlayerApi.jar')
     compile 'com.timehop.stickyheadersrecyclerview:library:0.4.2@aar'
     compile 'org.jsoup:jsoup:1.7.3'

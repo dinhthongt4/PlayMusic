@@ -4,53 +4,90 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/lnHeaderMusicOnline"
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout.40"
-        android:id="@+id/rlSearch"
-        android:background="@color/bg.search"
-        android:layout_marginBottom="@dimen/margin.5"
-        >
+        android:background="@color/bg.header.video"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/margin.10">
 
-        <ImageView
-            android:layout_width="@dimen/layout.30"
-            android:layout_height="@dimen/layout.30"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_search"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/margin.10"
-            android:layout_marginEnd="@dimen/margin.10"
-            android:id="@+id/imgSearch"
-            tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/txtPlaylist"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textColor="@color/txt.default"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/txt.playlist.music.online"
+            android:textSize="@dimen/text.size.20" />
 
-        <ProgressBar
-            android:layout_width="@dimen/layout.30"
-            android:layout_height="@dimen/layout.30"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/margin.10"
-            android:layout_marginEnd="@dimen/margin.10"
-            android:id="@+id/progressBarSearch"
-            android:visibility="gone"
-            />
+        <TextView
+            android:id="@+id/txtSearch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/txt.default"
+            android:text="@string/txt.search.music.online"
+            android:textSize="@dimen/text.size.20" />
+    </LinearLayout>
 
-        <EditText
+    <RelativeLayout
+        android:id="@+id/rlParentSearch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/lnHeaderMusicOnline">
+
+        <RelativeLayout
+            android:id="@+id/rlSearch"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/layout.40"
+            android:layout_marginBottom="@dimen/margin.5"
+            android:background="@color/bg.search"
+            >
+
+            <ImageView
+                android:id="@+id/imgSearch"
+                android:layout_width="@dimen/layout.30"
+                android:layout_height="@dimen/layout.30"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/margin.10"
+                android:layout_marginRight="@dimen/margin.10"
+                android:src="@drawable/ic_search"
+                tools:ignore="ContentDescription" />
+
+            <ProgressBar
+                android:id="@+id/progressBarSearch"
+                android:layout_width="@dimen/layout.30"
+                android:layout_height="@dimen/layout.30"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/margin.10"
+                android:layout_marginRight="@dimen/margin.10"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/edtSearch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin.10"
+                android:layout_marginStart="@dimen/margin.10"
+                android:layout_toLeftOf="@id/imgSearch"
+                android:textSize="@dimen/text.size.13"
+                tools:ignore="RtlHardcoded,TextFields" />
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerViewMusicOnline"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/edtSearch"
-            android:textSize="@dimen/text.size.13"
-            android:layout_marginLeft="@dimen/margin.10"
-            android:layout_marginStart="@dimen/margin.10"
-            android:layout_toLeftOf="@id/imgSearch"
-            tools:ignore="RtlHardcoded,TextFields" />
+            android:layout_below="@id/rlSearch"
+            android:scrollbars="vertical"
+            />
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_below="@id/rlSearch"
-        android:id="@+id/recyclerViewMusicOnline"
-        android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 </RelativeLayout>

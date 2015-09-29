@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.example.thong.playmusic.model.ChildMusicOnline;
+import com.example.thong.playmusic.model.Tracks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class NewAlbumSpinner extends Spinner implements DialogInterface.OnMultiChoiceClickListener, DialogInterface.OnCancelListener{
 
-    private List<ChildMusicOnline> mChildMusicOnlines;
+    private List<Tracks> mTrackses;
     private boolean[] mSelected;
     private String mDefaultText;
     private MultiSpinnerListener mMultiSpinnerListener;
@@ -57,8 +57,8 @@ public class NewAlbumSpinner extends Spinner implements DialogInterface.OnMultiC
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         ArrayList<String> items = new ArrayList<>();
-        for(int i = 0; i < mChildMusicOnlines.size(); i++) {
-            items.add(mChildMusicOnlines.get(i).getTitle());
+        for(int i = 0; i < mTrackses.size(); i++) {
+            items.add(mTrackses.get(i).getTitle());
         }
 
         builder.setMultiChoiceItems(
@@ -76,14 +76,14 @@ public class NewAlbumSpinner extends Spinner implements DialogInterface.OnMultiC
         return true;
     }
 
-    public void setItems(List<ChildMusicOnline> childMusicOnlines, String allText,
+    public void setItems(List<Tracks> trackses, String allText,
                          MultiSpinnerListener listener) {
-        this.mChildMusicOnlines = childMusicOnlines;
+        this.mTrackses = trackses;
         this.mDefaultText = allText;
         this.mMultiSpinnerListener = listener;
 
         // all selected by default
-        mSelected = new boolean[mChildMusicOnlines.size()];
+        mSelected = new boolean[trackses.size()];
         for (int i = 0; i < mSelected.length; i++)
             mSelected[i] = false;
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="@dimen/layout.50"
+        android:layout_height="@dimen/layout.50"
+        android:id="@+id/imgAvatarAlbum"
+        android:src="@drawable/bg_avatar_album"
+        android:scaleType="centerCrop"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout.50"
+        android:id="@+id/txtNameAlbum"
+        android:textSize="@dimen/text.size.20"
+        android:text="Dem mua"
+        android:layout_toRightOf="@id/imgAvatarAlbum"
+        android:gravity="center"
+        android:background="#D8D8D8"
+        />
+</RelativeLayout>

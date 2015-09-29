@@ -20,4 +20,7 @@
     <string name="txt.admin.app">This is my music</string>
     <string name="txt.artist.app">by Dinh Thong</string>
     <string name="txt.same.video">Same Video</string>
+    <string name="txt.playlist.music.online">Playlist</string>
+    <string name="txt.search.music.online">Search</string>
+    <string name="txt.allow.download">Do you want to Download?</string>
 </resources>

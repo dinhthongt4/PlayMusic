@@ -1,17 +1,13 @@
 package com.example.thong.playmusic.media.player;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import com.example.thong.playmusic.config.FieldFinal;
-import com.example.thong.playmusic.model.ChildMusicOnline;
-import com.example.thong.playmusic.model.MediaInfo;
+import com.example.thong.playmusic.model.Tracks;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,13 +19,12 @@ public class ManagerPlay {
 
     private static final String TAG = "MANAGERPLAY";
     private static ManagerPlay mManagerPlay;
-    private MediaPlayer mMediaPlayer ;
-    private ArrayList<ChildMusicOnline> mChildMusicOnlines;
+    private MediaPlayer mMediaPlayer;
+    private ArrayList<Tracks> mTrackses;
     private int numberMedia;
     private boolean mIsPause;
     private OnSuccessPlayer mOnSuccessPlayer;
     private boolean mIsRepeat;
-    private Context mContext;
 
     public boolean isRepeat() {
         return mIsRepeat;
@@ -59,16 +54,16 @@ public class ManagerPlay {
     }
 
     // play a music
-    public void playSound(final Context context,int position, ArrayList<ChildMusicOnline> childMusicOnlines) {
+    public void playSound(final Context context, int position, ArrayList<Tracks> trackses) {
 
-        if(mChildMusicOnlines != null) {
-            mChildMusicOnlines.clear();
+        if (mTrackses != null) {
+            mTrackses.clear();
         }
-        mChildMusicOnlines = new ArrayList<>();
-        mChildMusicOnlines.addAll(childMusicOnlines);
+        mTrackses = new ArrayList<>();
+        mTrackses.addAll(trackses);
         numberMedia = position;
 
-        Uri uri = Uri.parse(mChildMusicOnlines.get(numberMedia).getUrlStream());
+        Uri uri = Uri.parse(mTrackses.get(numberMedia).getStream_url());
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -76,7 +71,7 @@ public class ManagerPlay {
             public void onPrepared(MediaPlayer mp) {
                 mMediaPlayer.start();
                 if (mOnSuccessPlayer != null) {
-                    mOnSuccessPlayer.onSuccess(mChildMusicOnlines.get(numberMedia));
+                    mOnSuccessPlayer.onSuccess(mTrackses.get(numberMedia));
                 }
             }
         });
@@ -90,11 +85,11 @@ public class ManagerPlay {
         setListener(context);
     }
 
-    public void playSound(final Context context,int position) {
+    public void playSound(final Context context, int position) {
 
         numberMedia = position;
 
-        Uri uri = Uri.parse(mChildMusicOnlines.get(numberMedia).getUrlStream());
+        Uri uri = Uri.parse(mTrackses.get(numberMedia).getStream_url());
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -102,7 +97,7 @@ public class ManagerPlay {
             public void onPrepared(MediaPlayer mp) {
                 mMediaPlayer.start();
                 if (mOnSuccessPlayer != null) {
-                    mOnSuccessPlayer.onSuccess(mChildMusicOnlines.get(numberMedia));
+                    mOnSuccessPlayer.onSuccess(mTrackses.get(numberMedia));
                 }
             }
         });
@@ -118,7 +113,7 @@ public class ManagerPlay {
 
     private void playSound(final Context context) {
 
-        Uri uri = Uri.parse(mChildMusicOnlines.get(numberMedia).getUrlStream());
+        Uri uri = Uri.parse(mTrackses.get(numberMedia).getStream_url());
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -126,7 +121,7 @@ public class ManagerPlay {
             public void onPrepared(MediaPlayer mp) {
                 mMediaPlayer.start();
                 if (mOnSuccessPlayer != null) {
-                    mOnSuccessPlayer.onSuccess(mChildMusicOnlines.get(numberMedia));
+                    mOnSuccessPlayer.onSuccess(mTrackses.get(numberMedia));
                 }
             }
         });
@@ -137,25 +132,23 @@ public class ManagerPlay {
             e.printStackTrace();
         }
 
-       setListener(context);
+        setListener(context);
     }
 
-    public void playSoundOnline(ArrayList<ChildMusicOnline> childMusicOnlines, final int position) {
+    public void playSoundOnline(ArrayList<Tracks> childMusicOnlines, final int position) {
 
-        Log.v(TAG, childMusicOnlines.get(position).getUrlStream() + "?client_id=" + FieldFinal.CLIENT_ID);
-
-        if(mChildMusicOnlines != null) {
-            mChildMusicOnlines.clear();
+        if (mTrackses != null) {
+            mTrackses.clear();
         } else {
-            mChildMusicOnlines = new ArrayList<>();
+            mTrackses = new ArrayList<>();
         }
 
-        mChildMusicOnlines.addAll(childMusicOnlines);
+        mTrackses.addAll(childMusicOnlines);
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
-            mMediaPlayer.setDataSource(mChildMusicOnlines.get(position).getUrlStream()+"?client_id="+ FieldFinal.CLIENT_ID);
+            mMediaPlayer.setDataSource(mTrackses.get(position).getStream_url() + "?client_id=" + FieldFinal.CLIENT_ID);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -166,19 +159,20 @@ public class ManagerPlay {
             public void onPrepared(MediaPlayer mediaPlayer) {
                 mMediaPlayer.start();
                 if (mOnSuccessPlayer != null) {
-                    mOnSuccessPlayer.onSuccess(mChildMusicOnlines.get(position));
+                    mOnSuccessPlayer.onSuccess(mTrackses.get(position));
                 }
             }
         });
 
         numberMedia = position;
+
     }
 
-    public void playSoundOnline( final int position) {
+    public void playSoundOnline(final int position) {
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
-            mMediaPlayer.setDataSource(mChildMusicOnlines.get(position).getUrlStream()+"?client_id="+ FieldFinal.CLIENT_ID);
+            mMediaPlayer.setDataSource(mTrackses.get(position).getStream_url() + "?client_id=" + FieldFinal.CLIENT_ID);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -189,23 +183,58 @@ public class ManagerPlay {
             public void onPrepared(MediaPlayer mediaPlayer) {
                 mMediaPlayer.start();
                 if (mOnSuccessPlayer != null) {
-                    mOnSuccessPlayer.onSuccess(mChildMusicOnlines.get(position));
+                    mOnSuccessPlayer.onSuccess(mTrackses.get(position));
                 }
             }
         });
 
         numberMedia = position;
     }
+
+    public void playSoundOnline(final Tracks tracks) {
+
+
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        try {
+            mMediaPlayer.setDataSource(tracks.getStream_url() + "?client_id=" + FieldFinal.CLIENT_ID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mMediaPlayer.prepareAsync();
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mMediaPlayer.start();
+                if (mOnSuccessPlayer != null) {
+                    mOnSuccessPlayer.onSuccess(tracks);
+                }
+            }
+        });
+
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.start();
+            }
+        });
+    }
+
     // pause a music
     public void onPause() {
-        if(mMediaPlayer != null) {
-            mMediaPlayer.pause();
+
+        if (mMediaPlayer != null) {
+
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
+            }
         }
     }
 
     // start a music
     public void onStart() {
-        if(mMediaPlayer != null) {
+        if (mMediaPlayer != null) {
             mMediaPlayer.start();
         }
     }
@@ -213,15 +242,15 @@ public class ManagerPlay {
     // next a music in list
     public void onNext(Context context) {
 
-        if(mChildMusicOnlines != null) {
-        if (numberMedia < mChildMusicOnlines.size() - 1) {
+        if (mTrackses != null) {
+            if (numberMedia < mTrackses.size() - 1) {
 
-            if (mMediaPlayer != null) {
-                mMediaPlayer.release();
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.release();
+                }
+                numberMedia++;
+                playSound(context);
             }
-            numberMedia++;
-            playSound(context);
-        }
         }
     }
 
@@ -241,9 +270,9 @@ public class ManagerPlay {
         mOnSuccessPlayer = onSuccessPlayer;
     }
 
-    public ArrayList<ChildMusicOnline> getListMusics() {
-        if(mChildMusicOnlines != null) {
-            return mChildMusicOnlines;
+    public ArrayList<Tracks> getListMusics() {
+        if (mTrackses != null) {
+            return mTrackses;
         } else {
             return null;
         }
@@ -252,16 +281,19 @@ public class ManagerPlay {
     //get current MediaPlayer
     public MediaPlayer getCurrentMediaPlayer() {
 
-        if(mMediaPlayer != null) {
+        if (mMediaPlayer != null) {
             return mMediaPlayer;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
-    public ChildMusicOnline getCurrentInfoMediaPlayer() {
-        return mChildMusicOnlines.get(numberMedia);
+    public Tracks getCurrentInfoMediaPlayer() {
+        if (mTrackses != null) {
+            return mTrackses.get(numberMedia);
+        } else {
+            return null;
+        }
     }
 
     private void setListener(final Context context) {
@@ -269,7 +301,7 @@ public class ManagerPlay {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
 
-                if(isRepeat()) {
+                if (isRepeat()) {
                     mediaPlayer.start();
                 } else {
                     onNext(context);
@@ -279,6 +311,6 @@ public class ManagerPlay {
     }
 
     public interface OnSuccessPlayer {
-        void onSuccess(ChildMusicOnline childMusicOnline);
+        void onSuccess(Tracks childMusicOnline);
     }
 }

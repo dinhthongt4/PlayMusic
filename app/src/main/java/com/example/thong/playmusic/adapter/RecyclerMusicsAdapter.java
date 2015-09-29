@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.thong.playmusic.R;
-import com.example.thong.playmusic.model.ChildMusicOnline;
-import com.example.thong.playmusic.model.MediaInfo;
+import com.example.thong.playmusic.model.Tracks;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 
@@ -22,11 +22,14 @@ import java.util.ArrayList;
  */
 public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAdapter.ViewHolder> {
 
-    private final ArrayList<ChildMusicOnline> mChildMusicOnlines;
+    private final ArrayList<Tracks> mTrackses;
     private OnItemClick mOnItemClick;
     private static final String TAG = "RecyclerMusicsAdapter";
-    public RecyclerMusicsAdapter(ArrayList<ChildMusicOnline> childMusicOnlines) {
-        this.mChildMusicOnlines = childMusicOnlines;
+    private OnClickDownloadListener mOnClickDownloadListener;
+    private OnClickAddAlbumListener mOnClickAddAlbumListener;
+
+    public RecyclerMusicsAdapter(ArrayList<Tracks> trackses) {
+        this.mTrackses = trackses;
     }
 
     @Override
@@ -38,22 +41,38 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        viewHolder.txtName.setText(mChildMusicOnlines.get(i).getTitle());
-        viewHolder.txtArtist.setText("by " +mChildMusicOnlines.get(i).getArtist());
-        MediaMetadataRetriever metaRetriver = new MediaMetadataRetriever();
-        metaRetriver.setDataSource(mChildMusicOnlines.get(i).getUrlStream());
-        Log.v(TAG,mChildMusicOnlines.get(i).getUrlStream());
-        byte[] art = metaRetriver.getEmbeddedPicture();
-        if(art != null) {
-            Bitmap songImage = BitmapFactory
-                    .decodeByteArray(art, 0, art.length);
-                viewHolder.imgMediaPlayer.setImageBitmap(songImage);
+        if (mTrackses.get(i).getTitle() != null) {
+            if (mTrackses.get(i).getTitle().contains("-")) {
+                String[] title = mTrackses.get(i).getTitle().split("-");
+                mTrackses.get(i).setTitle(title[0]);
+
+                if (title.length > 1) {
+                    mTrackses.get(i).setArtist(title[1]);
+                    viewHolder.txtArtist.setText(mTrackses.get(i).getArtist());
+                }
+            }
+            viewHolder.txtName.setText(mTrackses.get(i).getTitle());
+        }
+        if (mTrackses.get(i).getArtwork_url() != null) {
+            ImageLoader.getInstance().displayImage(mTrackses.get(i).getArtwork_url(), viewHolder.imgMediaPlayer);
+        }
+
+        if(mTrackses.get(i).isDownloadable()) {
+            viewHolder.imgDownload.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mChildMusicOnlines.size();
+        return mTrackses.size();
+    }
+
+    public void setOnClickDownloadListener(OnClickDownloadListener onClickDownloadListener) {
+        mOnClickDownloadListener = onClickDownloadListener;
+    }
+
+    public void setOnClickAddAlbumListener(OnClickAddAlbumListener onClickAddAlbumListener) {
+        mOnClickAddAlbumListener = onClickAddAlbumListener;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -61,18 +80,40 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
         final ImageView imgMediaPlayer;
         final TextView txtName;
         final TextView txtArtist;
+        ImageView imgAddAlbum;
+        ImageView imgDownload;
 
         ViewHolder(View itemView) {
             super(itemView);
             txtName = (TextView) itemView.findViewById(R.id.txtNameMediaPlayer);
             txtArtist = (TextView) itemView.findViewById(R.id.txtArtistMediaPlayer);
             imgMediaPlayer = (ImageView) itemView.findViewById(R.id.imgMediaPlayer);
+            imgAddAlbum = (ImageView) itemView.findViewById(R.id.imgAddAlbum);
+            imgDownload = (ImageView) itemView.findViewById(R.id.imgDownload);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(mOnItemClick !=  null) {
+                    if (mOnItemClick != null) {
                         mOnItemClick.onClick(getPosition());
+                    }
+                }
+            });
+
+            imgAddAlbum.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mOnClickAddAlbumListener != null) {
+                        mOnClickAddAlbumListener.onClick(getPosition());
+                    }
+                }
+            });
+
+            imgDownload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mOnClickDownloadListener != null) {
+                        mOnClickDownloadListener.onClick(getPosition());
                     }
                 }
             });
@@ -85,6 +126,14 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
 
 
     public interface OnItemClick {
-        public void onClick(int position);
+        void onClick(int position);
+    }
+
+    public interface OnClickDownloadListener {
+        void onClick(int position);
+    }
+
+    public interface OnClickAddAlbumListener {
+        void onClick(int postion);
     }
 }

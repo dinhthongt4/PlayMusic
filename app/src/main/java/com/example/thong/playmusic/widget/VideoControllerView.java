@@ -297,7 +297,7 @@ public class VideoControllerView extends FrameLayout implements View.OnClickList
         }
     }
 
-    private void doPauseResume() {
+    public void doPauseResume() {
         if (!check_in) {
             if (mPlayer == null) {
                 return;

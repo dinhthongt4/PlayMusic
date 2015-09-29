@@ -24,6 +24,10 @@
         <activity android:name=".activity.VideoViewActivity_"/>
         <activity android:name=".MainActivity_"/>
         <activity android:name=".activity.DetailAlbumActivity_"/>
+        <activity android:name=".VideoViewFullScreenActivity_"
+            android:screenOrientation="landscape"
+            />
+        <activity android:name=".activity.DetailPlaylistActivity_"/>
     </application>
 
 </manifest>

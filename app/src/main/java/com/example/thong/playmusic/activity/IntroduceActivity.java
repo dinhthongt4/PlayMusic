@@ -1,31 +1,20 @@
 package com.example.thong.playmusic.activity;
 
-import android.content.ContentResolver;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.widget.TextView;
 
 
 import com.example.thong.playmusic.MainActivity_;
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.adapter.ViewPagerIntroduceAdapter;
-import com.example.thong.playmusic.database.ManagerDatabase;
-import com.example.thong.playmusic.model.ChildMusicOnline;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 
 /**

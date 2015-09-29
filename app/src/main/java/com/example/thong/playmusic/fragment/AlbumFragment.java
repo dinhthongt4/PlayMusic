@@ -45,11 +45,9 @@ public class AlbumFragment extends Fragment{
         mLayoutManager = new GridLayoutManager(getActivity(),2);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAlbumArrayList = new ArrayList<>();
-
         getAlbumName();
         mRecyclerAlbumsAdapter = new RecyclerAlbumsAdapter(mAlbumArrayList);
         mRecyclerView.setAdapter(mRecyclerAlbumsAdapter);
-
         // set listener in album
         setListener();
     }
@@ -57,12 +55,12 @@ public class AlbumFragment extends Fragment{
     private void getAlbumName() {
         Album album = new Album();
         album.setAlbumName("New Album");
+
         mAlbumArrayList.add(album);
         ManagerDatabase managerDatabase = new ManagerDatabase(getActivity());
         try {
             managerDatabase.open();
             mAlbumArrayList.addAll(0, managerDatabase.getNameAlbum());
-            Log.v("Album",""+mAlbumArrayList.size());
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -76,7 +74,7 @@ public class AlbumFragment extends Fragment{
         mRecyclerAlbumsAdapter.setOnItemAlbumClickListener(new RecyclerAlbumsAdapter.OnItemAlbumClickListener() {
             @Override
             public void onClick(int id, String albumName) {
-                DetailAlbumActivity_.intent(getActivity()).extra("id",id).extra("albumName",albumName).start();
+                DetailAlbumActivity_.intent(getActivity()).extra("id", id).extra("albumName", albumName).start();
             }
         });
 
@@ -99,5 +97,17 @@ public class AlbumFragment extends Fragment{
                 });
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.v("123", "123");
+    }
+
+    public void reLoadAlbum() {
+        mAlbumArrayList.clear();
+        getAlbumName();
+        mRecyclerAlbumsAdapter.notifyDataSetChanged();
     }
 }

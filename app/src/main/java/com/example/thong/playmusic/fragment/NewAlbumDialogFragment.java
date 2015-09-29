@@ -7,7 +7,7 @@ import android.widget.EditText;
 
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.database.ManagerDatabase;
-import com.example.thong.playmusic.model.ChildMusicOnline;
+import com.example.thong.playmusic.model.Tracks;
 import com.example.thong.playmusic.widget.NewAlbumSpinner;
 
 import org.androidannotations.annotations.AfterViews;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @EFragment(R.layout.diaglog_fragment_new_album)
 public class NewAlbumDialogFragment extends DialogFragment {
 
-    private ArrayList<ChildMusicOnline> mChildMusicOnlines;
+    private ArrayList<Tracks> mTrackses;
     private boolean[] mSelected;
     private OnClickSubmitListener mOnClickSubmitListener;
 
@@ -37,7 +37,7 @@ public class NewAlbumDialogFragment extends DialogFragment {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         getListMusics();
 
-        mSpinnerMusics.setItems(mChildMusicOnlines, "Select Music", new NewAlbumSpinner.MultiSpinnerListener() {
+        mSpinnerMusics.setItems(mTrackses, "Select Music", new NewAlbumSpinner.MultiSpinnerListener() {
             @Override
             public void onItemsSelected(boolean[] selected) {
                 mSelected = selected;
@@ -54,7 +54,7 @@ public class NewAlbumDialogFragment extends DialogFragment {
         ManagerDatabase managerDatabase = new ManagerDatabase(getActivity());
         try {
             managerDatabase.open();
-            mChildMusicOnlines = managerDatabase.getDataMediaInfo();
+            mTrackses = managerDatabase.getDataMediaInfo();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -81,7 +81,7 @@ public class NewAlbumDialogFragment extends DialogFragment {
                     if(mSelected != null) {
                         for (int i = 0; i < mSelected.length; i++) {
                             if(mSelected[i]) {
-                                managerDatabase.insertMediaGroup(mChildMusicOnlines.get(i).getIdMusic(),idAlbum);
+                                managerDatabase.insertMediaGroup(mTrackses.get(i).getId(),idAlbum);
                             }
                         }
                     }
@@ -91,7 +91,6 @@ public class NewAlbumDialogFragment extends DialogFragment {
                 } finally {
                     managerDatabase.close();
                 }
-
 
             mOnClickSubmitListener.onClick();
             getDialog().dismiss();

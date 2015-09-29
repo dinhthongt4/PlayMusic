@@ -31,6 +31,4 @@ public class MediaPlayerService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-
-
 }

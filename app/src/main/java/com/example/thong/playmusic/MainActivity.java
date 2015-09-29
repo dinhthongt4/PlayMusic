@@ -3,14 +3,18 @@ package com.example.thong.playmusic;
 import android.content.Intent;
 
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.widget.ImageView;
 
 import android.widget.TextView;
 
 import com.example.thong.playmusic.adapter.ViewPagerMainAdapter;
+import com.example.thong.playmusic.fragment.AddAlubmDialogFragment;
+import com.example.thong.playmusic.fragment.AddAlubmDialogFragment_;
+import com.example.thong.playmusic.fragment.AlbumFragment;
 import com.example.thong.playmusic.media.player.ManagerPlay;
-import com.example.thong.playmusic.model.ChildMusicOnline;
+import com.example.thong.playmusic.model.Tracks;
 import com.example.thong.playmusic.service.MediaPlayerService_;
 import com.example.thong.playmusic.widget.TabBar;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -110,14 +114,24 @@ public class MainActivity extends FragmentActivity {
 
         mManagerPlay.setmOnSuccessPlayer(new ManagerPlay.OnSuccessPlayer() {
             @Override
-            public void onSuccess(ChildMusicOnline childMusicOnline) {
+            public void onSuccess(Tracks tracks) {
 
-                mTxtNameMediaPlayer.setText(checkLimitText(childMusicOnline.getTitle(), 15));
-                mTxtArtistMediaPlayer.setText(checkLimitText(childMusicOnline.getArtist(), 20));
+                mTxtNameMediaPlayer.setText(checkLimitText(tracks.getTitle(), 15));
+                mTxtArtistMediaPlayer.setText(checkLimitText(tracks.getArtist(), 20));
                 mManagerPlay.setIsPause(false);
                 mImgPause.setImageResource(R.drawable.ic_pause);
-                if (childMusicOnline.getUrlAvatar() != null) {
-                    ImageLoader.getInstance().displayImage(childMusicOnline.getUrlAvatar(), mImgMediaPlayer);
+
+
+
+                if(mManagerPlay.isRepeat()) {
+                    mImgRepeat.setImageResource(R.drawable.icon_repeat_selected);
+
+                } else {
+                    mImgRepeat.setImageResource(R.drawable.ic_repeat);
+                }
+
+                if (tracks.getArtwork_url() != null) {
+                    ImageLoader.getInstance().displayImage(tracks.getArtwork_url(), mImgMediaPlayer);
                 }
             }
         });
@@ -131,6 +145,10 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onPageSelected(int position) {
                 mTabBar.clickTab(position);
+                if(position == 1) {
+                    AlbumFragment albumFragment = (AlbumFragment) mViewPagerMainAdapter.getItem(position);
+                    albumFragment.reLoadAlbum();
+                }
             }
 
             @Override
@@ -174,4 +192,5 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
+
 }

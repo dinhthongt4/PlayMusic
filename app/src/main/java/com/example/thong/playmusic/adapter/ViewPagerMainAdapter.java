@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.thong.playmusic.fragment.AlbumFragment_;
 import com.example.thong.playmusic.fragment.MusicsFragment_;
+import com.example.thong.playmusic.fragment.MusicsOnlineFragment;
+import com.example.thong.playmusic.fragment.MusicsOnlineFragment_;
 import com.example.thong.playmusic.fragment.VideoFragment_;
 
 
@@ -27,7 +29,7 @@ public class ViewPagerMainAdapter extends FragmentStatePagerAdapter {
         } else if(position == 2){
             return new VideoFragment_();
         } else {
-            return new VideoFragment_();
+            return new MusicsOnlineFragment_();
         }
     }
 

@@ -1,65 +1,33 @@
-/*
-package com.example.thong.playmusic.model;
 
-import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
+package com.example.thong.playmusic.model;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-*/
-/**
- * Created by thong on 9/11/15.
- *//*
 
-public class TypeMusicOnline implements ParentObject {
+@SuppressWarnings("serial")
+public class TypeMusicOnline implements Serializable{
 
+    private ArrayList<Tracks> tracks;
+    private String permalink;
 
-    private List<Object> childrenList;
-
-    @SerializedName(value = "tracks")
-    private List<ChildMusicOnline> childMusicOnlines;
-
-    @SerializedName(value = "permalink")
-    private String typeMusicOnline;
-
-    private boolean isExpanded;
-
-    public boolean isExpanded() {
-        return isExpanded;
+    public String getPermalink() {
+        return permalink;
     }
 
-    public void setIsExpanded(boolean isExpanded) {
-        this.isExpanded = isExpanded;
+    public void setPermalink(String permalink) {
+        this.permalink = permalink;
     }
 
-    @Override
-    public List<Object> getChildObjectList() {
-        return childrenList;
+    public ArrayList<Tracks> getTracks() {
+        return tracks;
     }
 
-    @Override
-    public boolean isInitiallyExpanded() {
-        return false;
-    }
-
-    public void setChildObjectList(List<Object> list) {
-        childrenList = list;
-    }
-
-    public String getTypeMusicOnline() {
-        return typeMusicOnline;
-    }
-
-    public void setTypeMusicOnline(String typeMusicOnline) {
-        this.typeMusicOnline = typeMusicOnline;
-    }
-
-    public List<ChildMusicOnline> getChildMusicOnlines() {
-        return childMusicOnlines;
-    }
-
-    public void setChildMusicOnlines(List<ChildMusicOnline> childMusicOnlines) {
-        this.childMusicOnlines = childMusicOnlines;
+    public void setTracks(ArrayList<Tracks> tracks) {
+        this.tracks = tracks;
     }
 }
-*/
+
+

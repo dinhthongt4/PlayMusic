@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout.50"
+        android:id="@+id/txtNewAlbum"
+        android:text="@string/txt.new.album"
+        android:textSize="@dimen/text.size.20"
+        android:gravity="center"
+        android:background="@color/bg.header.main.activity"
+        android:textColor="@color/txt.default"
+        />
+</RelativeLayout>

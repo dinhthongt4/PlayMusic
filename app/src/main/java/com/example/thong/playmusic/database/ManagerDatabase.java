@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.thong.playmusic.model.Album;
-import com.example.thong.playmusic.model.ChildMusicOnline;
+import com.example.thong.playmusic.model.Tracks;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class ManagerDatabase {
 
     private static final String TAG = "ManagerDatabase";
     private static final String DATABASE_NAME = "media_player";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     private static final String TABLE_MEDIA_INFO = "tbl_media_info";
     private static final String TABLE_MEDIA_TYPE = "tbl_media_type";
     private static final String TABLE_MEDIA_GROUP = "tbl_media_group";
@@ -121,9 +121,9 @@ public class ManagerDatabase {
         return albumArrayList;
     }
 
-    public ArrayList<ChildMusicOnline> getDataMediaInfo() {
+    public ArrayList<Tracks> getDataMediaInfo() {
 
-        ArrayList<ChildMusicOnline> childMusicOnlines = new ArrayList<>();
+        ArrayList<Tracks> trackses = new ArrayList<>();
         String[] columns = new String[]{COLUMN_ID, COLUMN_PATH, COLUMN_NAME, COLUMN_ID_TYPE, COLUMN_ARTIST
                 , COLUMN_SINGER, COLUMN_DURATION, COLUMN_IMAGE_PATH, COLUMN_DESCRIPTION, COLUMN_ALBUM, COLUMN_COPY_RIGHT};
         Cursor c = mDb.query(TABLE_MEDIA_INFO, columns, null, null, null, null, null);
@@ -145,22 +145,22 @@ public class ManagerDatabase {
         int iCopyRight = c.getColumnIndex(COLUMN_COPY_RIGHT);
 
         while (c.moveToNext()) {
-            ChildMusicOnline childMusicOnline = new ChildMusicOnline();
-            childMusicOnline.setIdMusic(c.getInt(iID));
-            childMusicOnline.setUrlStream(c.getString(iPath));
-            childMusicOnline.setArtist(c.getString(iArtist));
-            childMusicOnline.setDuration(Long.parseLong(c.getString(iDuration)));
-            childMusicOnline.setTitle(c.getString(iName));
-            childMusicOnline.setUrlAvatar(c.getString(iImagePath));
-            childMusicOnlines.add(childMusicOnline);
+            Tracks tracks = new Tracks();
+            tracks.setId(c.getInt(iID));
+            tracks.setStream_url(c.getString(iPath));
+            tracks.setArtist(c.getString(iArtist));
+            tracks.setDuration(Long.parseLong(c.getString(iDuration)));
+            tracks.setTitle(c.getString(iName));
+            tracks.setArtwork_url(c.getString(iImagePath));
+            trackses.add(tracks);
         }
         c.close();
-        return childMusicOnlines;
+        return trackses;
     }
 
-    public ChildMusicOnline getDataMediaInfo(int id) {
+    public Tracks getDataMediaInfo(int id) {
 
-        ChildMusicOnline childMusicOnline = null;
+        Tracks tracks = null;
         Cursor c = mDb.rawQuery("SELECT * FROM " + TABLE_MEDIA_INFO + " WHERE " + COLUMN_ID + "='" + id + "'", null);
         if (c == null) {
             Log.v("Cursor", "C is NULL");
@@ -179,22 +179,22 @@ public class ManagerDatabase {
         int iCopyRight = c.getColumnIndex(COLUMN_COPY_RIGHT);
 
         while (c.moveToNext()) {
-            childMusicOnline = new ChildMusicOnline();
-            childMusicOnline.setIdMusic(iID);
-            childMusicOnline.setUrlStream(c.getString(iPath));
-            childMusicOnline.setArtist(c.getString(iArtist));
-            childMusicOnline.setDuration(Long.parseLong(c.getString(iDuration)));
-            childMusicOnline.setTitle(c.getString(iName));
-            childMusicOnline.setUrlAvatar(c.getString(iImagePath));
+            tracks = new Tracks();
+            tracks.setId(iID);
+            tracks.setStream_url(c.getString(iPath));
+            tracks.setArtist(c.getString(iArtist));
+            tracks.setDuration(Long.parseLong(c.getString(iDuration)));
+            tracks.setTitle(c.getString(iName));
+            tracks.setArtwork_url(c.getString(iImagePath));
         }
         c.close();
-        return childMusicOnline;
+        return tracks;
     }
 
     public int getIDAlbum(String groupName) {
         int idAlbum = 0;
 
-        Cursor c = mDb.rawQuery("SELECT "+COLUMN_ID_GROUP+" FROM "+TABLE_MEDIA_GROUP_NAME+" WHERE "+COLUMN_GROUP_NAME+"='"+groupName+"'",null);
+        Cursor c = mDb.rawQuery("SELECT " + COLUMN_ID_GROUP + " FROM " + TABLE_MEDIA_GROUP_NAME + " WHERE " + COLUMN_GROUP_NAME + "='" + groupName + "'", null);
         if (c == null) {
             Log.v("Cursor", "C is NULL");
         }
@@ -214,6 +214,23 @@ public class ManagerDatabase {
         int iId = c.getColumnIndex(COLUMN_ID);
         while (c.moveToNext()) {
             idMusics.add(c.getInt(iId));
+        }
+        c.close();
+        return idMusics;
+    }
+
+    public int getIdMusic(String path) {
+        int idMusics = 0;
+
+        Cursor c = mDb.rawQuery("SELECT "+COLUMN_ID+" FROM "+TABLE_MEDIA_INFO+" WHERE "+COLUMN_PATH+"='"+path+"'",null);
+        if (c == null) {
+            Log.v("Cursor", "C is NULL");
+        }
+
+        int iID = c.getColumnIndex(COLUMN_ID);
+
+        while (c.moveToNext()) {
+            idMusics = c.getInt(iID);
         }
         c.close();
         return idMusics;
@@ -252,7 +269,9 @@ public class ManagerDatabase {
 
             arg0.execSQL("CREATE TABLE " + TABLE_MEDIA_GROUP + " ("
                     + COLUMN_ID + " INTEGER, "
-                    + COLUMN_ID_GROUP + " INTEGER);");
+                    + COLUMN_ID_GROUP + " INTEGER" +
+                    "value," +
+                    "  PRIMARY KEY ( "+ COLUMN_ID +", "+ COLUMN_ID_GROUP +"));");
 
             arg0.execSQL("CREATE TRIGGER check_insert BEFORE INSERT ON " + TABLE_MEDIA_INFO + "  \n" +
                     "BEGIN  \n" +

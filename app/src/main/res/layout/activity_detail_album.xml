@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_main"
-    >
+    android:background="@drawable/bg_main">
 
     <RelativeLayout
         android:id="@+id/rlHeaderAlbum"
@@ -16,11 +15,11 @@
             android:id="@+id/txtNameAlbum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_marginLeft="@dimen/margin.10"
             android:layout_marginStart="@dimen/margin.10"
             android:textColor="@color/txt.default"
             android:textSize="@dimen/text.size.20"
-            android:layout_centerInParent="true"
             tools:ignore="RelativeOverlap" />
 
     </RelativeLayout>
@@ -33,15 +32,13 @@
         android:layout_alignParentBottom="true"
         android:background="@color/bg.header.main.activity">
 
-        <com.example.thong.playmusic.widget.CircleImageView
+        <ImageView
             android:id="@+id/imgMediaPlayer"
             android:layout_width="@dimen/layout.50"
             android:layout_height="@dimen/layout.50"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/margin.10"
-            android:layout_marginStart="@dimen/margin.10"
-            android:scaleType="center"
-            android:src="@drawable/ic_disk1" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_avatar_music" />
 
         <RelativeLayout
             android:id="@+id/rlButton"
@@ -84,6 +81,18 @@
 
         </RelativeLayout>
 
+        <ImageView
+            android:id="@+id/imgRepeat"
+            android:layout_width="@dimen/layout.25"
+            android:layout_height="@dimen/layout.25"
+            android:layout_marginLeft="@dimen/margin.5"
+            android:layout_marginRight="@dimen/margin.5"
+            android:layout_marginTop="17.5dp"
+            android:layout_toLeftOf="@id/rlButton"
+            android:src="@drawable/ic_repeat"
+            tools:ignore="ContentDescription" />
+
+
         <TextView
             android:id="@+id/txtNameMediaPlayer"
             android:layout_width="wrap_content"
@@ -91,13 +100,14 @@
             android:layout_marginLeft="@dimen/margin.10"
             android:layout_marginStart="@dimen/margin.10"
             android:layout_marginTop="@dimen/margin.10"
-            android:layout_toLeftOf="@+id/rlButton"
+            android:layout_toLeftOf="@+id/imgRepeat"
             android:layout_toRightOf="@id/imgMediaPlayer"
             android:ellipsize="end"
             android:maxLength="18"
             android:maxLines="1"
+            android:text="@string/txt.admin.app"
             android:textColor="#fff"
-            android:textSize="@dimen/layout.15"
+            android:textSize="@dimen/text.size.15"
             android:textStyle="bold"
             tools:ignore="RtlHardcoded" />
 
@@ -108,10 +118,11 @@
             android:layout_below="@id/txtNameMediaPlayer"
             android:layout_marginLeft="@dimen/margin.10"
             android:layout_marginStart="@dimen/margin.10"
-            android:layout_toLeftOf="@+id/rlButton"
+            android:layout_toLeftOf="@+id/imgRepeat"
             android:layout_toRightOf="@id/imgMediaPlayer"
             android:maxLength="23"
             android:maxLines="1"
+            android:text="@string/txt.artist.app"
             android:textColor="@color/txt.default"
             android:textSize="@dimen/text.size.13"
             tools:ignore="RtlHardcoded" />
@@ -121,8 +132,9 @@
         android:id="@+id/recyclerViewMusics"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/rlHeaderAlbum"
         android:layout_above="@id/rlPlayMusic"
-        />
+        android:layout_below="@id/rlHeaderAlbum"
+        android:layout_marginLeft="@dimen/margin.10"
+        android:layout_marginRight="@dimen/margin.10" />
 
 </RelativeLayout>

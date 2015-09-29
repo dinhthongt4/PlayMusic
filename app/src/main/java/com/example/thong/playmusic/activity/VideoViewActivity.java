@@ -2,26 +2,23 @@ package com.example.thong.playmusic.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.example.thong.playmusic.R;
-import com.example.thong.playmusic.adapter.RecyclerVideoAdapter;
+import com.example.thong.playmusic.VideoViewFullScreenActivity;
+import com.example.thong.playmusic.VideoViewFullScreenActivity_;
 import com.example.thong.playmusic.adapter.RecyclerVideoSameAdapter;
 import com.example.thong.playmusic.api.Api;
 import com.example.thong.playmusic.config.FieldFinal;
@@ -29,16 +26,13 @@ import com.example.thong.playmusic.model.Item;
 import com.example.thong.playmusic.model.ListVideos;
 import com.example.thong.playmusic.widget.SpacesItemDecoration;
 import com.example.thong.playmusic.widget.VideoControllerView;
-import com.google.android.youtube.player.YouTubeBaseActivity;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.jsoup.Jsoup;
@@ -58,14 +52,16 @@ import retrofit.RestAdapter;
  */
 
 @EActivity(R.layout.activity_video_view)
-public class VideoViewActivity extends Activity implements VideoControllerView.MediaPlayerControl{
+public class VideoViewActivity extends Activity implements VideoControllerView.MediaPlayerControl {
 
+    public static final int REQUEST_CODE = 0;
     private static final String TAG = "VideoViewActivity";
     private final String BASE_URL = "http://keepvid.com/?url=https://www.youtube.com/watch?v=";
     private VideoControllerView mVideoControllerView;
     private int mVideoDuration;
     private ArrayList<Item> mItems;
     private RecyclerVideoSameAdapter mRecyclerVideoSameAdapter;
+    private String mUrlVideo;
 
     @ViewById(R.id.video_detail)
     VideoView mVideoView;
@@ -96,7 +92,7 @@ public class VideoViewActivity extends Activity implements VideoControllerView.M
 
     @AfterViews
     void init() {
-        mVideoControllerView = new VideoControllerView(this,false);
+        mVideoControllerView = new VideoControllerView(this, false);
         RequestTask requestTask = new RequestTask();
         requestTask.execute(BASE_URL + mVideoId);
         initMedia();
@@ -187,7 +183,16 @@ public class VideoViewActivity extends Activity implements VideoControllerView.M
 
     @Override
     public void fullScreenToggle() {
+        Log.v("full",mUrlVideo);
+        VideoViewFullScreenActivity_.intent(this).extra("position",mVideoView.getCurrentPosition())
+                .extra("urlStreamVideo",mUrlVideo).startForResult(REQUEST_CODE);
+    }
 
+    @OnActivityResult(REQUEST_CODE)
+    void onResult(int resultCode, Intent data) {
+
+        Log.v(TAG, String.valueOf(data.getIntExtra("position",0)));
+        mVideoView.seekTo(data.getIntExtra("position",0));
     }
 
     private void setListener() {
@@ -199,12 +204,12 @@ public class VideoViewActivity extends Activity implements VideoControllerView.M
                 mUrlImage = mItems.get(position).getSnippet().getThumbnail().getHigh().getUrl();
                 mVideoId = mItems.get(position).getId().getVideoId();
                 requestTask.execute(BASE_URL + mVideoId);
-                if(mVideoView.isPlaying()) {
+                if (mVideoView.isPlaying()) {
                     mVideoView.stopPlayback();
                 }
                 mVideoControllerView.removeAllViews();
                 mVideoControllerView = null;
-                mVideoControllerView = new VideoControllerView(getApplicationContext(),false);
+                mVideoControllerView = new VideoControllerView(getApplicationContext(), false);
                 mItems.clear();
                 getVideosSearch("snippet", mNameVideo, "video", 10, FieldFinal.KEY_YOUTUBE);
                 initMedia();
@@ -246,7 +251,7 @@ public class VideoViewActivity extends Activity implements VideoControllerView.M
                 }
             }
 
-            Log.v("result",responseString.toString());
+            Log.v("result", responseString.toString());
             return String.valueOf(responseString);
         }
 
@@ -267,6 +272,7 @@ public class VideoViewActivity extends Activity implements VideoControllerView.M
                     }
                 }
                 mVideoView.setVideoPath(url);
+                mUrlVideo = url;
             }
             mProgressBar.setVisibility(View.GONE);
         }

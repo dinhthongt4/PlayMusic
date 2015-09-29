@@ -1,7 +1,11 @@
-/*
 package com.example.thong.playmusic.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,14 +13,19 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.bignerdranch.expandablerecyclerview.Listener.ExpandCollapseListener;
 import com.example.thong.playmusic.R;
+import com.example.thong.playmusic.activity.DetailAlbumActivity_;
+import com.example.thong.playmusic.activity.DetailPlaylistActivity_;
+import com.example.thong.playmusic.adapter.RecyclerPlaylistAdapter;
+import com.example.thong.playmusic.adapter.RecyclerSearchAdapter;
 import com.example.thong.playmusic.api.Api;
 import com.example.thong.playmusic.config.FieldFinal;
 import com.example.thong.playmusic.media.player.ManagerPlay;
-import com.example.thong.playmusic.model.ChildMusicOnline;
-import com.example.thong.playmusic.model.RootMusicOnline;
+import com.example.thong.playmusic.model.SearchMusics;
+import com.example.thong.playmusic.model.Tracks;
 import com.example.thong.playmusic.model.TypeMusicOnline;
 
 import org.androidannotations.annotations.AfterViews;
@@ -30,19 +39,19 @@ import java.util.ArrayList;
 
 import retrofit.RestAdapter;
 
-*/
-/**
- * Created by thong on 9/11/15.
- *//*
-
 
 @EFragment(R.layout.fragment_musics_online)
 public class MusicsOnlineFragment extends Fragment {
-    private RecyclerView.LayoutManager mLayoutManager;
+
     private static final String TAG = "ONLINE";
-    private RecyclerExpandableMusicsAdapter mRecyclerExpandableMusicsAdapter;
-    private ArrayList<ParentObject> mParentObjects;
-    private int mPositionList = 1000;
+
+    private ArrayList<Tracks> mTracks;
+    private ArrayList<TypeMusicOnline> mTypeMusicOnlines;
+    private RecyclerPlaylistAdapter mRecyclerPlaylistAdapter;
+    private RecyclerView.LayoutManager mLayoutManagerLinear;
+    private RecyclerView.LayoutManager mLayoutManagerGrid;
+    private RecyclerSearchAdapter mRecyclerSearchAdapter;
+    private ManagerPlay mManagerPlay;
 
     @ViewById(R.id.recyclerViewMusicOnline)
     RecyclerView mRecyclerViewMusicsOnline;
@@ -56,13 +65,37 @@ public class MusicsOnlineFragment extends Fragment {
     @ViewById(R.id.progressBarSearch)
     ProgressBar mProgressBarSearch;
 
+    @ViewById(R.id.rlSearch)
+    RelativeLayout mRlSearch;
+
+    @ViewById(R.id.txtPlaylist)
+    TextView mTxtPlaylist;
+
+    @ViewById(R.id.txtSearch)
+    TextView mTxtSearch;
+
+
     @AfterViews
     void init() {
+        mManagerPlay = ManagerPlay.getInstance();
+
+        mTxtPlaylist.setBackgroundColor(0xff7878F5);
+        mRlSearch.setVisibility(View.GONE);
+
         mRecyclerViewMusicsOnline.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerViewMusicsOnline.setLayoutManager(mLayoutManager);
-        mParentObjects = new ArrayList<>();
+        mLayoutManagerLinear = new LinearLayoutManager(getActivity());
+        mLayoutManagerGrid = new GridLayoutManager(getActivity(),2);
+        mRecyclerViewMusicsOnline.setLayoutManager(mLayoutManagerGrid);
+
+        mTracks = new ArrayList<>();
+        mRecyclerSearchAdapter = new RecyclerSearchAdapter(mTracks);
+
+        mTypeMusicOnlines = new ArrayList<>();
+        mRecyclerPlaylistAdapter = new RecyclerPlaylistAdapter(mTypeMusicOnlines);
+        mRecyclerViewMusicsOnline.setAdapter(mRecyclerPlaylistAdapter);
+
         getPlaylistMusics();
+        setListener();
     }
 
     // get playlist music in soundclound
@@ -70,16 +103,23 @@ public class MusicsOnlineFragment extends Fragment {
     void getPlaylistMusics() {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://api.soundcloud.com").build();
         Api api = restAdapter.create(Api.class);
-        generateMusics(api.getMusicsOnline(FieldFinal.CLIENT_ID));
+
+        ArrayList<TypeMusicOnline> typeMusicOnlines = api.getMusicsOnline(FieldFinal.CLIENT_ID);
+
+        if(mTypeMusicOnlines.size() >  0) {
+            mTypeMusicOnlines.clear();
+        }
+
+        mTypeMusicOnlines.addAll(typeMusicOnlines);
+        Log.v(TAG,"size" +   String.valueOf(mTypeMusicOnlines.size()));
         setUiMusicsOnline();
     }
 
     // set ui after load complex music in play list
     @UiThread
     void setUiMusicsOnline() {
-        mRecyclerExpandableMusicsAdapter = new RecyclerExpandableMusicsAdapter(getActivity(),mParentObjects);
-        mRecyclerViewMusicsOnline.setAdapter(mRecyclerExpandableMusicsAdapter);
-        setOnClickListener();
+        Log.v(TAG, "size" + String.valueOf(mTypeMusicOnlines.size()));
+        mRecyclerPlaylistAdapter.notifyDataSetChanged();
     }
 
     // get list musics when search
@@ -87,8 +127,14 @@ public class MusicsOnlineFragment extends Fragment {
     void getPlaylistSearch(String strSearch) {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://api.soundcloud.com").build();
         Api api = restAdapter.create(Api.class);
-        RootMusicOnline rootMusicOnline = api.getMusicsSearchOnline(strSearch,FieldFinal.CLIENT_ID,10);
-        generateMusicsSearch(rootMusicOnline.getChildMusicOnlines(), strSearch);
+        SearchMusics searchMusics = api.getMusicsSearchOnline(strSearch, FieldFinal.CLIENT_ID, 20);
+        ArrayList<Tracks> trackses = searchMusics.getCollection();
+        if(mTracks.size() > 0) {
+            mTracks.clear();
+        }
+
+        Log.v(TAG, String.valueOf(trackses.size()));
+        mTracks.addAll(trackses);
         setUiMusicSearch();
     }
 
@@ -96,9 +142,7 @@ public class MusicsOnlineFragment extends Fragment {
     void setUiMusicSearch() {
         mImgSearch.setVisibility(View.VISIBLE);
         mProgressBarSearch.setVisibility(View.GONE);
-        mRecyclerExpandableMusicsAdapter = new RecyclerExpandableMusicsAdapter(getActivity(),mParentObjects);
-        mRecyclerViewMusicsOnline.setAdapter(mRecyclerExpandableMusicsAdapter);
-        setOnClickListener();
+        mRecyclerSearchAdapter.notifyDataSetChanged();
     }
 
     @Click(R.id.imgSearch)
@@ -109,101 +153,70 @@ public class MusicsOnlineFragment extends Fragment {
         getPlaylistSearch(strSearch);
     }
 
-
-    private void generateMusics(ArrayList<TypeMusicOnline> typeMusicOnlines) {
-
-        for (TypeMusicOnline typeMusicOnline : typeMusicOnlines) {
-            ArrayList<Object> childList = new ArrayList<>();
-            childList.addAll(typeMusicOnline.getChildMusicOnlines());
-            typeMusicOnline.setChildObjectList(childList);
-            mParentObjects.add(typeMusicOnline);
-        }
+    @Click(R.id.txtPlaylist)
+    void setListenerPlaylistItem() {
+        mTxtPlaylist.setBackgroundColor(0xff7878F5);
+        mTxtSearch.setBackgroundColor(0xffA9A9F5);
+        mRlSearch.setVisibility(View.GONE);
+        mRecyclerViewMusicsOnline.setLayoutManager(mLayoutManagerGrid);
+        mRecyclerViewMusicsOnline.setAdapter(mRecyclerPlaylistAdapter);
     }
 
-    private void generateMusicsSearch(ArrayList<ChildMusicOnline> childMusicOnlines,String search) {
-        TypeMusicOnline typeMusicOnline = new TypeMusicOnline();
-        ArrayList<Object> childList = new ArrayList<>();
-        childList.addAll(childMusicOnlines);
-        typeMusicOnline.setChildObjectList(childList);
-        typeMusicOnline.setTypeMusicOnline(search);
-        typeMusicOnline.setChildMusicOnlines(childMusicOnlines);
-        mParentObjects.add(0, typeMusicOnline);
+    @Click(R.id.txtSearch)
+    void setListenerSearchItem() {
+        mTxtSearch.setBackgroundColor(0xff7878F5);
+        mTxtPlaylist.setBackgroundColor(0xffA9A9F5);
+        mRlSearch.setVisibility(View.VISIBLE);
+        mRecyclerViewMusicsOnline.setLayoutManager(mLayoutManagerLinear);
+        mRecyclerViewMusicsOnline.setAdapter(mRecyclerSearchAdapter);
     }
 
-    private void setOnClickListener() {
-        mRecyclerExpandableMusicsAdapter.setOnChildItemClick(new RecyclerExpandableMusicsAdapter.OnChildItemClick() {
+    public void setListener() {
+        mRecyclerSearchAdapter.setOnClickItemListener(new RecyclerSearchAdapter.OnClickItemListener() {
             @Override
             public void onClick(int position) {
-                Log.v(TAG,position+"");
-                getListMusic(position);
+                mManagerPlay.setIsRepeat(true);
+                if(mManagerPlay.getCurrentMediaPlayer() != null) {
+                    mManagerPlay.getCurrentMediaPlayer().release();
+                }
+                mManagerPlay.playSoundOnline(mTracks.get(position));
             }
         });
 
-        mRecyclerExpandableMusicsAdapter.addExpandCollapseListener(new ExpandCollapseListener() {
+        mRecyclerSearchAdapter.setOnClickAddAlbumListener(new RecyclerSearchAdapter.OnClickAddAlbumListener() {
             @Override
-            public void onRecyclerViewItemExpanded(int i) {
-                TypeMusicOnline typeMusicOnline = (TypeMusicOnline) mParentObjects.get(i);
-                typeMusicOnline.setIsExpanded(true);
-            }
+            public void onClick(int postion) {
 
-            @Override
-            public void onRecyclerViewItemCollapsed(int i) {
-                TypeMusicOnline typeMusicOnline = (TypeMusicOnline) mParentObjects.get(i);
-                typeMusicOnline.setIsExpanded(false);
             }
         });
-    }
 
-    // get position list musics and position music in this list
-    private void getListMusic(int position) {
+        mRecyclerSearchAdapter.setOnClickDownloadListener(new RecyclerSearchAdapter.OnClickDownloadListener() {
+            @Override
+            public void onClick(final int position) {
+                AllowDialogFragment allowDialogFragment = new AllowDialogFragment_();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                allowDialogFragment.show(ft, "ABC");
+                allowDialogFragment.setOnClickSubmitListener(new AllowDialogFragment.OnClickSubmitListener() {
+                    @Override
+                    public void onClick() {
 
-        int positionList = 0;
-        int n = position;
-        int positionInList = position - 1;
+                        Log.v(TAG, String.valueOf(mTracks.size()));
+                        if (!mTracks.get(position).getDownload_url().startsWith("http://") && !mTracks.get(position).getDownload_url().startsWith("https://"))
+                            mTracks.get(position).setDownload_url("http://" + mTracks.get(position).getDownload_url());
 
-        for(int i = 0; i < n ; i++) {
-            TypeMusicOnline typeMusicOnline = (TypeMusicOnline) mParentObjects.get(i);
-            if (typeMusicOnline.isExpanded()) {
-                for (int j = 0; j < typeMusicOnline.getChildMusicOnlines().size(); j++) {
-                    n--;
-                }
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mTracks.get(position).getDownload_url() + "?client_id=" + FieldFinal.CLIENT_ID));
+                        startActivity(browserIntent);
+                    }
+                });
             }
-            positionList = i;
-        }
+        });
 
-
-
-        for( int i = 0; i < positionList; i++) {
-            TypeMusicOnline typeMusicOnline = (TypeMusicOnline) mParentObjects.get(i);
-            if(typeMusicOnline.isExpanded()) {
-                for (int j = 0; j < typeMusicOnline.getChildMusicOnlines().size(); j++) {
-                    positionInList --;
-                }
+        mRecyclerPlaylistAdapter.setOnClickItemListener(new RecyclerPlaylistAdapter.OnClickItemListener() {
+            @Override
+            public void onClick(int position) {
+                DetailPlaylistActivity_.intent(getActivity()).extra("tracks",mTypeMusicOnlines.get(position)).start();
             }
-            positionInList--;
-        }
-
-        if(positionInList == mPositionList) {
-            ManagerPlay managerPlay = ManagerPlay.getInstance();
-            managerPlay.getCurrentMediaPlayer().release();
-            managerPlay.playSoundOnline(positionInList);
-        } else {
-            TypeMusicOnline typeMusicOnline = (TypeMusicOnline) mParentObjects.get(positionList);
-            playSoundOnline((ArrayList<ChildMusicOnline>) typeMusicOnline.getChildMusicOnlines(), positionInList);
-            mPositionList = positionList;
-
-        }
-
-
-    }
-
-    // play music online
-    private void playSoundOnline(ArrayList<ChildMusicOnline> childMusicOnlines,int position) {
-        ManagerPlay managerPlay = ManagerPlay.getInstance();
-        if(managerPlay.getCurrentMediaPlayer() != null) {
-            managerPlay.getCurrentMediaPlayer().release();
-        }
-        managerPlay.playSoundOnline(childMusicOnlines, position);
+        });
     }
 }
-*/
