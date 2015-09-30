@@ -79,10 +79,10 @@ public class MusicsFragment extends Fragment {
             public void onClick(int position) {
 
                 if (mManagerPlay.getCurrentMediaPlayer() != null) {
-                    mManagerPlay.getCurrentMediaPlayer().release();
+                    mManagerPlay.getCurrentMediaPlayer().stop();
                 }
 
-                if (mManagerPlay.getListMusics() == null || mManagerPlay.getListMusics().get(position).isOnline()) {
+                if (mManagerPlay.getListMusics() == null) {
                     mManagerPlay.playSound(getActivity(), position, mTrackses);
                 } else {
                     mManagerPlay.playSound(getActivity(), position);
@@ -105,6 +105,9 @@ public class MusicsFragment extends Fragment {
                         ManagerDatabase managerDatabase = new ManagerDatabase(getActivity());
                         try {
                             managerDatabase.open();
+
+                            Log.v(TAG, String.valueOf(mTrackses.get(postion).getId()));
+
                             managerDatabase.insertMediaGroup(mTrackses.get(postion).getId(), albumId);
                             Toast.makeText(getActivity(), "Add success", Toast.LENGTH_LONG).show();
                         } catch (SQLException e) {

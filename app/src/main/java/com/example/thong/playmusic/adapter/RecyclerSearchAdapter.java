@@ -61,6 +61,8 @@ public class RecyclerSearchAdapter extends RecyclerView.Adapter<RecyclerSearchAd
             holder.txtTitle.setText(mTrackses.get(position).getTitle());
         }
 
+        holder.imgAddAlbum.setVisibility(View.GONE);
+
         if(mTrackses.get(position).isDownloadable()) {
             holder.imgDownLoad.setVisibility(View.VISIBLE);
         }

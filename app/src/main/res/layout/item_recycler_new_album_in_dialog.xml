@@ -11,5 +11,6 @@
         android:gravity="center"
         android:background="@color/bg.header.main.activity"
         android:textColor="@color/txt.default"
+        android:layout_marginRight="@dimen/margin.10"
         />
 </RelativeLayout>

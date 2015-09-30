@@ -177,9 +177,9 @@ public class MusicsOnlineFragment extends Fragment {
             public void onClick(int position) {
                 mManagerPlay.setIsRepeat(true);
                 if(mManagerPlay.getCurrentMediaPlayer() != null) {
-                    mManagerPlay.getCurrentMediaPlayer().release();
+                    mManagerPlay.getCurrentMediaPlayer().stop();
                 }
-                mManagerPlay.playSoundOnline(mTracks.get(position));
+                mManagerPlay.playSoundOnline(mTracks.get(position),getActivity());
             }
         });
 

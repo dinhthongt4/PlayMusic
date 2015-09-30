@@ -28,6 +28,7 @@
             android:screenOrientation="landscape"
             />
         <activity android:name=".activity.DetailPlaylistActivity_"/>
+        <activity android:name=".activity.UIPlayMusicActivity_"/>
     </application>
 
 </manifest>

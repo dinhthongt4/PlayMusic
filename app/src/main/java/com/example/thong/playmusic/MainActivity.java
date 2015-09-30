@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.widget.ImageView;
 
 import android.widget.TextView;
 
+import com.example.thong.playmusic.activity.UIPlayMusicActivity_;
 import com.example.thong.playmusic.adapter.ViewPagerMainAdapter;
-import com.example.thong.playmusic.fragment.AddAlubmDialogFragment;
-import com.example.thong.playmusic.fragment.AddAlubmDialogFragment_;
-import com.example.thong.playmusic.fragment.AlbumFragment;
 import com.example.thong.playmusic.media.player.ManagerPlay;
 import com.example.thong.playmusic.model.Tracks;
 import com.example.thong.playmusic.service.MediaPlayerService_;
@@ -62,13 +61,17 @@ public class MainActivity extends FragmentActivity {
         ImageLoader.getInstance().init(config);
         Intent intent = new Intent(this, MediaPlayerService_.class);
         startService(intent);
-        mManagerPlay = ManagerPlay.getInstance();
-        setListener();
-        checkMediaPlayer();
-
         mViewPagerMainAdapter = new ViewPagerMainAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerMainAdapter);
         mViewPager.setOffscreenPageLimit(3);
+        mManagerPlay = ManagerPlay.getInstance();
+        Log.v(TAG, "Success");
+        setListener();
+        checkMediaPlayer();
+    }
+    @Click(R.id.rlPlayMusic)
+    void listenerPlayMusic() {
+        UIPlayMusicActivity_.intent(this).start();
     }
 
     @Click(R.id.imgPause)
@@ -116,12 +119,11 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onSuccess(Tracks tracks) {
 
+                Log.v("Success","Success");
                 mTxtNameMediaPlayer.setText(checkLimitText(tracks.getTitle(), 15));
                 mTxtArtistMediaPlayer.setText(checkLimitText(tracks.getArtist(), 20));
                 mManagerPlay.setIsPause(false);
                 mImgPause.setImageResource(R.drawable.ic_pause);
-
-
 
                 if(mManagerPlay.isRepeat()) {
                     mImgRepeat.setImageResource(R.drawable.icon_repeat_selected);
@@ -145,10 +147,6 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onPageSelected(int position) {
                 mTabBar.clickTab(position);
-                if(position == 1) {
-                    AlbumFragment albumFragment = (AlbumFragment) mViewPagerMainAdapter.getItem(position);
-                    albumFragment.reLoadAlbum();
-                }
             }
 
             @Override
@@ -181,7 +179,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void checkMediaPlayer() {
-        if (mManagerPlay.getCurrentMediaPlayer() != null) {
+        if (mManagerPlay.getCurrentInfoMediaPlayer() != null) {
 
             mTxtNameMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getTitle());
             mTxtArtistMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getArtist());
@@ -190,7 +188,24 @@ public class MainActivity extends FragmentActivity {
             } else {
                 mImgPause.setImageResource((R.drawable.ic_pause));
             }
+            if(mManagerPlay.isRepeat()) {
+                mImgRepeat.setImageResource(R.drawable.icon_repeat_selected);
+
+            } else {
+                mImgRepeat.setImageResource(R.drawable.ic_repeat);
+            }
+
+            if (mManagerPlay.getCurrentInfoMediaPlayer().getArtwork_url() != null) {
+                ImageLoader.getInstance().displayImage(mManagerPlay.getCurrentInfoMediaPlayer().getArtwork_url(), mImgMediaPlayer);
+            }
+
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkMediaPlayer();
+        setListener();
+    }
 }

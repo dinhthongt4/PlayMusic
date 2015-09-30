@@ -48,16 +48,20 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
 
                 if (title.length > 1) {
                     mTrackses.get(i).setArtist(title[1]);
-                    viewHolder.txtArtist.setText(mTrackses.get(i).getArtist());
                 }
             }
             viewHolder.txtName.setText(mTrackses.get(i).getTitle());
         }
+
+        if(mTrackses.get(i).getArtist() != null) {
+            viewHolder.txtArtist.setText(mTrackses.get(i).getArtist());
+        }
+
         if (mTrackses.get(i).getArtwork_url() != null) {
             ImageLoader.getInstance().displayImage(mTrackses.get(i).getArtwork_url(), viewHolder.imgMediaPlayer);
         }
 
-        if(mTrackses.get(i).isDownloadable()) {
+        if (mTrackses.get(i).isDownloadable()) {
             viewHolder.imgDownload.setVisibility(View.VISIBLE);
         }
     }
@@ -103,7 +107,7 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
             imgAddAlbum.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mOnClickAddAlbumListener != null) {
+                    if (mOnClickAddAlbumListener != null) {
                         mOnClickAddAlbumListener.onClick(getPosition());
                     }
                 }
@@ -112,7 +116,7 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
             imgDownload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mOnClickDownloadListener != null) {
+                    if (mOnClickDownloadListener != null) {
                         mOnClickDownloadListener.onClick(getPosition());
                     }
                 }

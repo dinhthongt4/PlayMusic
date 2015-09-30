@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.thong.playmusic.MainActivity;
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.adapter.RecyclerMusicsAdapter;
+import com.example.thong.playmusic.adapter.RecyclerSearchAdapter;
 import com.example.thong.playmusic.config.FieldFinal;
 import com.example.thong.playmusic.database.ManagerDatabase;
 import com.example.thong.playmusic.fragment.AddAlubmDialogFragment;
@@ -47,7 +48,8 @@ public class DetailPlaylistActivity extends FragmentActivity {
 
     private RecyclerView.LayoutManager mLayoutManager;
     private ManagerPlay mManagerPlay;
-    private RecyclerMusicsAdapter mMusicsAdapter;
+    private RecyclerSearchAdapter mRecyclerSearchAdapter;
+    private boolean mIsFirstClick;
 
     @ViewById(R.id.recyclerViewMusics)
     RecyclerView mRecyclerViewMusic;
@@ -77,8 +79,8 @@ public class DetailPlaylistActivity extends FragmentActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerViewMusic.setLayoutManager(mLayoutManager);
         mManagerPlay = ManagerPlay.getInstance();
-        mMusicsAdapter = new RecyclerMusicsAdapter(mTypeMusicOnline.getTracks());
-        mRecyclerViewMusic.setAdapter(mMusicsAdapter);
+        mRecyclerSearchAdapter = new RecyclerSearchAdapter(mTypeMusicOnline.getTracks());
+        mRecyclerViewMusic.setAdapter(mRecyclerSearchAdapter);
         setClickListener();
     }
 
@@ -96,6 +98,11 @@ public class DetailPlaylistActivity extends FragmentActivity {
         }
     }
 
+    @Click(R.id.rlPlayMusic)
+    void listenerPlayMusic() {
+        UIPlayMusicActivity_.intent(this).start();
+    }
+
     @Click(R.id.imgNext)
     void listenerNext() {
         mManagerPlay.onNext(this);
@@ -106,23 +113,46 @@ public class DetailPlaylistActivity extends FragmentActivity {
         mManagerPlay.onBack(this);
     }
 
+    @Click(R.id.imgRepeat)
+    void listenerRepeat() {
+        if(mManagerPlay.getListMusics() != null) {
+            if(mManagerPlay.isRepeat()) {
+                mManagerPlay.setIsRepeat(false);
+                mImgRepeat.setImageResource(R.drawable.ic_repeat);
+            } else {
+                mManagerPlay.setIsRepeat(true);
+                mImgRepeat.setImageResource(R.drawable.icon_repeat_selected);
+            }
+        }
+    }
 
     private void setClickListener() {
-        mMusicsAdapter.setOnItemClick(new RecyclerMusicsAdapter.OnItemClick() {
-            @Override
-            public void onClick(int position) {
-                if (mManagerPlay.getCurrentMediaPlayer() != null) {
-                    mManagerPlay.getCurrentMediaPlayer().release();
-                }
+       mRecyclerSearchAdapter.setOnClickItemListener(new RecyclerSearchAdapter.OnClickItemListener() {
+           @Override
+           public void onClick(int position) {
 
-                mManagerPlay.playSoundOnline(mTypeMusicOnline.getTracks(), position);
-            }
-        });
+               if (mManagerPlay.getCurrentMediaPlayer() != null) {
+                   mManagerPlay.getCurrentMediaPlayer().stop();
+               }
+               if(!mIsFirstClick) {
+                   mManagerPlay.playSoundOnline(mTypeMusicOnline.getTracks(), position,getApplicationContext());
+                   mIsFirstClick = true;
+               } else {
+                   mManagerPlay.playSoundOnline(position,getApplicationContext());
+               }
+
+           }
+       });
+
 
         mManagerPlay.setmOnSuccessPlayer(new ManagerPlay.OnSuccessPlayer() {
             @Override
             public void onSuccess(Tracks childMusicOnline) {
-                mTxtArtistMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getArtist());
+
+                if (mManagerPlay.getCurrentInfoMediaPlayer().getArtist() != null) {
+                    mTxtArtistMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getArtist());
+                }
+
                 if (mManagerPlay.getIsPause()) {
                     mImgPause.setImageResource(R.drawable.ic_play);
                 } else {
@@ -142,7 +172,7 @@ public class DetailPlaylistActivity extends FragmentActivity {
             }
         });
 
-        mMusicsAdapter.setOnClickDownloadListener(new RecyclerMusicsAdapter.OnClickDownloadListener() {
+        mRecyclerSearchAdapter.setOnClickDownloadListener(new RecyclerSearchAdapter.OnClickDownloadListener() {
             @Override
             public void onClick(final int position) {
                 AllowDialogFragment allowDialogFragment = new AllowDialogFragment_();
@@ -158,31 +188,6 @@ public class DetailPlaylistActivity extends FragmentActivity {
 
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mTypeMusicOnline.getTracks().get(position).getDownload_url() + "?client_id=" + FieldFinal.CLIENT_ID));
                         startActivity(browserIntent);
-                    }
-                });
-            }
-        });
-
-        mMusicsAdapter.setOnClickAddAlbumListener(new RecyclerMusicsAdapter.OnClickAddAlbumListener() {
-            @Override
-            public void onClick(final int postion) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                AddAlubmDialogFragment addAlubmDialogFragment = new AddAlubmDialogFragment_();
-                addAlubmDialogFragment.show(fragmentTransaction, "abc");
-
-                addAlubmDialogFragment.setOnSelectedAlbumListener(new AddAlubmDialogFragment.OnSelectedAlbumListener() {
-                    @Override
-                    public void OnSelected(int albumId) {
-
-                        ManagerDatabase managerDatabase = new ManagerDatabase(getApplicationContext());
-                        try {
-                            managerDatabase.open();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        } finally {
-                            managerDatabase.close();
-                        }
                     }
                 });
             }

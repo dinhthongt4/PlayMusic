@@ -61,6 +61,9 @@ public class DetailAlbumActivity extends FragmentActivity {
     @ViewById(R.id.txtArtistMediaPlayer)
     TextView mTxtArtistMediaPlayer;
 
+    @ViewById(R.id.imgRepeat)
+    ImageView mImgRepeat;
+
     @AfterViews
     void init() {
         mTxtNameAlbum.setText(mAlbumName);
@@ -75,6 +78,24 @@ public class DetailAlbumActivity extends FragmentActivity {
         setClickListener();
     }
 
+    @Click(R.id.rlPlayMusic)
+    void listenerPlayMusic() {
+        UIPlayMusicActivity_.intent(this).start();
+    }
+
+    @Click(R.id.imgRepeat)
+    void listenerRepeat() {
+        if(mManagerPlay.getListMusics() != null) {
+            if(mManagerPlay.isRepeat()) {
+                mManagerPlay.setIsRepeat(false);
+                mImgRepeat.setImageResource(R.drawable.ic_repeat);
+            } else {
+                mManagerPlay.setIsRepeat(true);
+                mImgRepeat.setImageResource(R.drawable.icon_repeat_selected);
+            }
+        }
+    }
+
     private void getChilMusicOnline() {
         ManagerDatabase managerDatabase = new ManagerDatabase(this);
         try {
@@ -82,8 +103,8 @@ public class DetailAlbumActivity extends FragmentActivity {
             ArrayList<Integer> idMusics = managerDatabase.getListIdMusics(mId);
             mTrackses = new ArrayList<>();
             for (int i =0; i < idMusics.size(); i++) {
-                mTrackses.add(managerDatabase.getDataMediaInfo(idMusics.get(i)));
-                Log.v(TAG, String.valueOf(mTrackses.size()));
+                mTrackses.add(managerDatabase.getDataMediaInfo(idMusics.get(i)));;
+                Log.v(TAG, String.valueOf(mTrackses.get(i).getId()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -136,7 +157,7 @@ public class DetailAlbumActivity extends FragmentActivity {
             @Override
             public void onClick(int position) {
                 if( mManagerPlay.getCurrentMediaPlayer() != null) {
-                    mManagerPlay.getCurrentMediaPlayer().release();
+                    mManagerPlay.getCurrentMediaPlayer().stop();
                 }
                 mManagerPlay.playSound(getApplicationContext(),position,mTrackses);
                 checkMediaPlayer();
@@ -158,6 +179,9 @@ public class DetailAlbumActivity extends FragmentActivity {
                         ManagerDatabase managerDatabase = new ManagerDatabase(getApplicationContext());
                         try {
                             managerDatabase.open();
+
+                            Log.v(TAG, String.valueOf(mTrackses.get(postion).getId()));
+
                             managerDatabase.insertMediaGroup(mTrackses.get(postion).getId(), albumId);
                             Toast.makeText(getApplicationContext(), "Add success", Toast.LENGTH_SHORT);
                         } catch (SQLException e) {

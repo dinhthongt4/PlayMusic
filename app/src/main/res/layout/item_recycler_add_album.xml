@@ -18,5 +18,6 @@
         android:layout_toRightOf="@id/imgAvatarAlbum"
         android:gravity="center"
         android:background="#D8D8D8"
+        android:layout_marginRight="@dimen/margin.10"
         />
 </RelativeLayout>

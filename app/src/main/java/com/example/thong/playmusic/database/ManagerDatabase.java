@@ -180,7 +180,7 @@ public class ManagerDatabase {
 
         while (c.moveToNext()) {
             tracks = new Tracks();
-            tracks.setId(iID);
+            tracks.setId(id);
             tracks.setStream_url(c.getString(iPath));
             tracks.setArtist(c.getString(iArtist));
             tracks.setDuration(Long.parseLong(c.getString(iDuration)));

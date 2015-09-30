@@ -4,7 +4,8 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
 
 import com.example.thong.playmusic.config.FieldFinal;
 import com.example.thong.playmusic.model.Tracks;
@@ -25,6 +26,25 @@ public class ManagerPlay {
     private boolean mIsPause;
     private OnSuccessPlayer mOnSuccessPlayer;
     private boolean mIsRepeat;
+    private boolean mIsOnline;
+    private OnChangeDuration mOnChangeDuration;
+    private Handler mHandler;
+
+    public boolean isOnline() {
+        return mIsOnline;
+    }
+
+    public void setIsOnline(boolean isOnline) {
+        this.mIsOnline = isOnline;
+    }
+
+    public int getNumberMedia() {
+        return numberMedia;
+    }
+
+    public void setNumberMedia(int numberMedia) {
+        this.numberMedia = numberMedia;
+    }
 
     public boolean isRepeat() {
         return mIsRepeat;
@@ -44,6 +64,20 @@ public class ManagerPlay {
 
     private ManagerPlay() {
 
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (mOnChangeDuration != null) {
+                    mOnChangeDuration.getDuration((Integer) msg.obj);
+                }
+            }
+        };
+        Thread thread = new Thread(new MyRunable());
+        thread.start();
     }
 
     public static synchronized ManagerPlay getInstance() {
@@ -55,17 +89,16 @@ public class ManagerPlay {
 
     // play a music
     public void playSound(final Context context, int position, ArrayList<Tracks> trackses) {
-
+        mIsOnline = false;
         if (mTrackses != null) {
             mTrackses.clear();
         }
         mTrackses = new ArrayList<>();
         mTrackses.addAll(trackses);
         numberMedia = position;
-
+        mMediaPlayer.reset();
         Uri uri = Uri.parse(mTrackses.get(numberMedia).getStream_url());
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -87,11 +120,11 @@ public class ManagerPlay {
 
     public void playSound(final Context context, int position) {
 
+        mIsOnline = false;
         numberMedia = position;
 
         Uri uri = Uri.parse(mTrackses.get(numberMedia).getStream_url());
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.reset();
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -113,9 +146,9 @@ public class ManagerPlay {
 
     private void playSound(final Context context) {
 
+        mIsOnline = false;
         Uri uri = Uri.parse(mTrackses.get(numberMedia).getStream_url());
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.reset();
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -135,8 +168,9 @@ public class ManagerPlay {
         setListener(context);
     }
 
-    public void playSoundOnline(ArrayList<Tracks> childMusicOnlines, final int position) {
+    public void playSoundOnline(ArrayList<Tracks> childMusicOnlines, final int position, Context context) {
 
+        mIsOnline = true;
         if (mTrackses != null) {
             mTrackses.clear();
         } else {
@@ -145,8 +179,7 @@ public class ManagerPlay {
 
         mTrackses.addAll(childMusicOnlines);
 
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.reset();
         try {
             mMediaPlayer.setDataSource(mTrackses.get(position).getStream_url() + "?client_id=" + FieldFinal.CLIENT_ID);
         } catch (IOException e) {
@@ -165,12 +198,12 @@ public class ManagerPlay {
         });
 
         numberMedia = position;
-
+        setListener(context);
     }
 
-    public void playSoundOnline(final int position) {
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    public void playSoundOnline(final int position, Context context) {
+        mIsOnline = true;
+        mMediaPlayer.reset();
         try {
             mMediaPlayer.setDataSource(mTrackses.get(position).getStream_url() + "?client_id=" + FieldFinal.CLIENT_ID);
         } catch (IOException e) {
@@ -189,11 +222,13 @@ public class ManagerPlay {
         });
 
         numberMedia = position;
+        setListener(context);
+
     }
 
-    public void playSoundOnline(final Tracks tracks) {
+    public void playSoundOnline(final Tracks tracks, Context context) {
 
-
+        mIsOnline = true;
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
@@ -212,13 +247,7 @@ public class ManagerPlay {
                 }
             }
         });
-
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.start();
-            }
-        });
+        setListener(context);
     }
 
     // pause a music
@@ -242,14 +271,20 @@ public class ManagerPlay {
     // next a music in list
     public void onNext(Context context) {
 
+
         if (mTrackses != null) {
             if (numberMedia < mTrackses.size() - 1) {
 
-                if (mMediaPlayer != null) {
-                    mMediaPlayer.release();
-                }
+                mMediaPlayer.stop();
                 numberMedia++;
-                playSound(context);
+
+                if (mIsOnline) {
+                    playSoundOnline(numberMedia, context);
+                } else {
+                    playSound(context);
+
+                }
+
             }
         }
     }
@@ -258,10 +293,13 @@ public class ManagerPlay {
     public void onBack(Context context) {
         if (numberMedia > 0) {
             numberMedia--;
-            if (mMediaPlayer != null) {
-                mMediaPlayer.release();
+            mMediaPlayer.stop();
+            if (mIsOnline) {
+                playSoundOnline(numberMedia, context);
+            } else {
+                playSound(context);
+
             }
-            playSound(context);
         }
     }
 
@@ -310,7 +348,37 @@ public class ManagerPlay {
         });
     }
 
+    public void setOnChangeDuration(OnChangeDuration onChangeDuration) {
+        mOnChangeDuration = onChangeDuration;
+
+
+    }
+
     public interface OnSuccessPlayer {
         void onSuccess(Tracks childMusicOnline);
+    }
+
+    public interface OnChangeDuration {
+        void getDuration(int duration);
+    }
+
+    class MyRunable implements Runnable {
+
+        @Override
+        public void run() {
+            while (true) {
+                if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                    Message message = mHandler.obtainMessage();
+                    message.obj = mMediaPlayer.getCurrentPosition();
+                    mHandler.sendMessage(message);
+                }
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

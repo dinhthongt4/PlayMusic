@@ -21,9 +21,17 @@ public class MediaPlayerService extends Service {
     private ManagerPlay mManagerPlay;
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        mManagerPlay = ManagerPlay.getInstance();
+        Log.v(TAG,"success");
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        mManagerPlay = ManagerPlay.getInstance();
+
+
         return START_NOT_STICKY;
     }
 

@@ -102,10 +102,6 @@ public class AlbumFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        Log.v("123", "123");
-    }
-
-    public void reLoadAlbum() {
         mAlbumArrayList.clear();
         getAlbumName();
         mRecyclerAlbumsAdapter.notifyDataSetChanged();

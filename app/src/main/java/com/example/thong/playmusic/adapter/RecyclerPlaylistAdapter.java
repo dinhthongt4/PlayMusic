@@ -34,7 +34,11 @@ public class RecyclerPlaylistAdapter extends RecyclerView.Adapter<RecyclerPlayli
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ImageLoader.getInstance().displayImage(mTypeMusicOnlines.get(position).getTracks().get(mNumberImage).getArtwork_url(),holder.imgAvatarPlaylist);
+
+        if(mTypeMusicOnlines.get(position).getTracks().get(mNumberImage).getArtwork_url() != null) {
+            ImageLoader.getInstance().displayImage(mTypeMusicOnlines.get(position).getTracks().get(mNumberImage).getArtwork_url(),holder.imgAvatarPlaylist);
+
+        }
         holder.txtNumberMusic.setText("+ " + mTypeMusicOnlines.get(position).getTracks().size());
         holder.txtNamePlaylist.setText(mTypeMusicOnlines.get(position).getPermalink());
     }
@@ -73,4 +77,5 @@ public class RecyclerPlaylistAdapter extends RecyclerView.Adapter<RecyclerPlayli
     public interface OnClickItemListener {
         void onClick(int position);
     }
+
 }
