@@ -1,6 +1,10 @@
 package com.example.thong.playmusic.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.adapter.RecyclerPlayMusicAdapter;
+import com.example.thong.playmusic.config.FieldFinal;
 import com.example.thong.playmusic.media.player.ManagerPlay;
 import com.example.thong.playmusic.model.Tracks;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -60,6 +65,13 @@ public class UIPlayMusicActivity extends Activity {
     private ArrayList<Tracks> mTrackses;
     private ManagerPlay mManagerPlay;
     private int mProgress;
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            checkMediaPlayer();
+        }
+    };
+    private IntentFilter mIntentFilter;
 
     @AfterViews
     void init() {
@@ -95,7 +107,7 @@ public class UIPlayMusicActivity extends Activity {
     void setListenerPlayPause() {
         if (mManagerPlay.getIsPause()) {
             mImgPlayPause.setImageResource(R.drawable.ic_pause);
-            mManagerPlay.onStart();
+            mManagerPlay.onStart(this);
             mManagerPlay.setIsPause(false);
         } else {
             mImgPlayPause.setImageResource(R.drawable.ic_play);
@@ -115,6 +127,7 @@ public class UIPlayMusicActivity extends Activity {
     }
 
     private void setListener() {
+
         mRecyclerPlayMusicAdapter.setmOnItemClickListener(new RecyclerPlayMusicAdapter.OnItemClickListener() {
             @Override
             public void OnClick(int position, View v) {
@@ -182,6 +195,8 @@ public class UIPlayMusicActivity extends Activity {
                                                         mManagerPlay.getCurrentMediaPlayer().seekTo(progress);
                                                     }
                                                     mProgress = progress;
+
+                                                    mTxtCurrentDuration.setText(getTimeString(progress));
                                                 }
 
                                                 @Override
@@ -198,7 +213,7 @@ public class UIPlayMusicActivity extends Activity {
     }
 
     private void checkMediaPlayer() {
-        if (mManagerPlay.getCurrentMediaPlayer() != null) {
+        if (mManagerPlay.getCurrentInfoMediaPlayer() != null) {
 
             mTxtNameMusic.setText(mManagerPlay.getCurrentInfoMediaPlayer().getTitle());
             mTxtArtist.setText(mManagerPlay.getCurrentInfoMediaPlayer().getArtist());
@@ -240,5 +255,20 @@ public class UIPlayMusicActivity extends Activity {
                 .append(String.format("%02d", seconds));
 
         return buf.toString();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(FieldFinal.ACTION_CHANGE_MEDIA);
+
+        registerReceiver(broadcastReceiver, mIntentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
     }
 }

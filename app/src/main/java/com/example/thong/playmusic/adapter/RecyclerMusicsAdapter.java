@@ -22,7 +22,7 @@ import java.util.ArrayList;
  */
 public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAdapter.ViewHolder> {
 
-    private final ArrayList<Tracks> mTrackses;
+    private ArrayList<Tracks> mTrackses;
     private OnItemClick mOnItemClick;
     private static final String TAG = "RecyclerMusicsAdapter";
     private OnClickDownloadListener mOnClickDownloadListener;
@@ -57,9 +57,9 @@ public class RecyclerMusicsAdapter extends RecyclerView.Adapter<RecyclerMusicsAd
             viewHolder.txtArtist.setText(mTrackses.get(i).getArtist());
         }
 
-        if (mTrackses.get(i).getArtwork_url() != null) {
-            ImageLoader.getInstance().displayImage(mTrackses.get(i).getArtwork_url(), viewHolder.imgMediaPlayer);
-        }
+//        if (mTrackses.get(i).getArtwork_url() != null) {
+//            ImageLoader.getInstance().displayImage(mTrackses.get(i).getArtwork_url(), viewHolder.imgMediaPlayer);
+//        }
 
         if (mTrackses.get(i).isDownloadable()) {
             viewHolder.imgDownload.setVisibility(View.VISIBLE);

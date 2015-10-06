@@ -1,7 +1,15 @@
 package com.example.thong.playmusic;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -12,8 +20,10 @@ import android.widget.TextView;
 
 import com.example.thong.playmusic.activity.UIPlayMusicActivity_;
 import com.example.thong.playmusic.adapter.ViewPagerMainAdapter;
+import com.example.thong.playmusic.config.FieldFinal;
 import com.example.thong.playmusic.media.player.ManagerPlay;
 import com.example.thong.playmusic.model.Tracks;
+import com.example.thong.playmusic.service.MediaPlayerService;
 import com.example.thong.playmusic.service.MediaPlayerService_;
 import com.example.thong.playmusic.widget.TabBar;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -23,6 +33,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 
 
@@ -32,6 +43,9 @@ public class MainActivity extends FragmentActivity {
     private static final String TAG = "MAIN";
     private ManagerPlay mManagerPlay;
     private ViewPagerMainAdapter mViewPagerMainAdapter;
+    private ServiceConnection mServiceConnection;
+    private boolean mIsBound;
+    private MediaPlayerService mMediaPlayerService;
 
     @ViewById(R.id.imgMediaPlayer)
     ImageView mImgMediaPlayer;
@@ -54,20 +68,33 @@ public class MainActivity extends FragmentActivity {
     @ViewById(R.id.imgRepeat)
     ImageView mImgRepeat;
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            checkMediaPlayer();
+        }
+    };
+    private IntentFilter mIntentFilter;
+
     @AfterViews
     public void init() {
+
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .build();
         ImageLoader.getInstance().init(config);
-        Intent intent = new Intent(this, MediaPlayerService_.class);
+             ;
+
+        Intent intent  = new Intent(MainActivity.this, MediaPlayerService_.class);
         startService(intent);
+
         mViewPagerMainAdapter = new ViewPagerMainAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerMainAdapter);
         mViewPager.setOffscreenPageLimit(3);
         mManagerPlay = ManagerPlay.getInstance();
-        Log.v(TAG, "Success");
         setListener();
         checkMediaPlayer();
+
+
     }
     @Click(R.id.rlPlayMusic)
     void listenerPlayMusic() {
@@ -78,13 +105,14 @@ public class MainActivity extends FragmentActivity {
     void listenerPause() {
 
         if (mManagerPlay.getIsPause()) {
-            mImgPause.setImageResource(R.drawable.ic_pause);
-            mManagerPlay.onStart();
             mManagerPlay.setIsPause(false);
+            mImgPause.setImageResource(R.drawable.ic_pause);
+            mManagerPlay.onStart(this);
+
         } else {
+            mManagerPlay.setIsPause(true);
             mImgPause.setImageResource(R.drawable.ic_play);
             mManagerPlay.onPause();
-            mManagerPlay.setIsPause(true);
         }
     }
 
@@ -119,7 +147,6 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onSuccess(Tracks tracks) {
 
-                Log.v("Success","Success");
                 mTxtNameMediaPlayer.setText(checkLimitText(tracks.getTitle(), 15));
                 mTxtArtistMediaPlayer.setText(checkLimitText(tracks.getArtist(), 20));
                 mManagerPlay.setIsPause(false);
@@ -180,7 +207,6 @@ public class MainActivity extends FragmentActivity {
 
     private void checkMediaPlayer() {
         if (mManagerPlay.getCurrentInfoMediaPlayer() != null) {
-
             mTxtNameMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getTitle());
             mTxtArtistMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getArtist());
             if (mManagerPlay.getIsPause()) {
@@ -205,7 +231,27 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkMediaPlayer();
-        setListener();
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(FieldFinal.ACTION_CHANGE_MEDIA);
+
+        registerReceiver(broadcastReceiver,mIntentFilter);
+
+        if(mManagerPlay != null) {
+            checkMediaPlayer();
+            setListener();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+       // unbindService(mServiceConnection);
+        Log.v(TAG,"Destrouy");
     }
 }

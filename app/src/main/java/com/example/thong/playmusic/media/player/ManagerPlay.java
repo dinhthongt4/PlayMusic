@@ -1,14 +1,19 @@
 package com.example.thong.playmusic.media.player;
 
+import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.example.thong.playmusic.config.FieldFinal;
 import com.example.thong.playmusic.model.Tracks;
+import com.example.thong.playmusic.service.MediaPlayerService;
+import com.example.thong.playmusic.service.MediaPlayerService_;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +34,7 @@ public class ManagerPlay {
     private boolean mIsOnline;
     private OnChangeDuration mOnChangeDuration;
     private Handler mHandler;
+    private OnChangeMediaPlayer mOnChangeMediaPlayer;
 
     public boolean isOnline() {
         return mIsOnline;
@@ -116,6 +122,10 @@ public class ManagerPlay {
         }
 
         setListener(context);
+
+        if (mOnChangeMediaPlayer != null) {
+            mOnChangeMediaPlayer.onChange();
+        }
     }
 
     public void playSound(final Context context, int position) {
@@ -142,6 +152,10 @@ public class ManagerPlay {
         }
 
         setListener(context);
+
+        if (mOnChangeMediaPlayer != null) {
+            mOnChangeMediaPlayer.onChange();
+        }
     }
 
     private void playSound(final Context context) {
@@ -166,6 +180,10 @@ public class ManagerPlay {
         }
 
         setListener(context);
+
+        if (mOnChangeMediaPlayer != null) {
+            mOnChangeMediaPlayer.onChange();
+        }
     }
 
     public void playSoundOnline(ArrayList<Tracks> childMusicOnlines, final int position, Context context) {
@@ -199,6 +217,10 @@ public class ManagerPlay {
 
         numberMedia = position;
         setListener(context);
+
+        if (mOnChangeMediaPlayer != null) {
+            mOnChangeMediaPlayer.onChange();
+        }
     }
 
     public void playSoundOnline(final int position, Context context) {
@@ -223,7 +245,9 @@ public class ManagerPlay {
 
         numberMedia = position;
         setListener(context);
-
+        if (mOnChangeMediaPlayer != null) {
+            mOnChangeMediaPlayer.onChange();
+        }
     }
 
     public void playSoundOnline(final Tracks tracks, Context context) {
@@ -248,23 +272,36 @@ public class ManagerPlay {
             }
         });
         setListener(context);
+        if (mOnChangeMediaPlayer != null) {
+            mOnChangeMediaPlayer.onChange();
+        }
     }
 
     // pause a music
     public void onPause() {
-
         if (mMediaPlayer != null) {
-
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
+                if (mOnChangeMediaPlayer != null) {
+                    mOnChangeMediaPlayer.onChange();
+                }
             }
         }
     }
 
     // start a music
-    public void onStart() {
+    public void onStart(Context context) {
         if (mMediaPlayer != null) {
+
+            if (!isServiceRunning(MediaPlayerService_.class.getName(),context)){
+                Log.v(TAG,"Service");
+                Intent intent = new Intent(context,MediaPlayerService_.class);
+                context.startService(intent);
+            }
             mMediaPlayer.start();
+            if (mOnChangeMediaPlayer != null) {
+                mOnChangeMediaPlayer.onChange();
+            }
         }
     }
 
@@ -282,9 +319,11 @@ public class ManagerPlay {
                     playSoundOnline(numberMedia, context);
                 } else {
                     playSound(context);
-
                 }
 
+                if (mOnChangeMediaPlayer != null) {
+                    mOnChangeMediaPlayer.onChange();
+                }
             }
         }
     }
@@ -300,9 +339,12 @@ public class ManagerPlay {
                 playSound(context);
 
             }
+
+            if (mOnChangeMediaPlayer != null) {
+                mOnChangeMediaPlayer.onChange();
+            }
         }
     }
-
 
     public void setmOnSuccessPlayer(OnSuccessPlayer onSuccessPlayer) {
         mOnSuccessPlayer = onSuccessPlayer;
@@ -348,10 +390,28 @@ public class ManagerPlay {
         });
     }
 
+    public void setChangeMediaPlayer (OnChangeMediaPlayer onChangeMediaPlayer) {
+        mOnChangeMediaPlayer = onChangeMediaPlayer;
+    }
+
     public void setOnChangeDuration(OnChangeDuration onChangeDuration) {
         mOnChangeDuration = onChangeDuration;
+    }
+
+    public static boolean isServiceRunning(String serviceName, Context context) {
 
 
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for(ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if(serviceName.equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public interface OnChangeMediaPlayer {
+        void onChange();
     }
 
     public interface OnSuccessPlayer {

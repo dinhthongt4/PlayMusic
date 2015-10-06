@@ -1,6 +1,9 @@
 package com.example.thong.playmusic.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -72,6 +75,14 @@ public class DetailPlaylistActivity extends FragmentActivity {
     @ViewById(R.id.imgMediaPlayer)
     ImageView mImgMediaPlayer;
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            checkMediaPlayer();
+        }
+    };
+    private IntentFilter mIntentFilter;
+
     @AfterViews
     void init() {
         mTxtNameAlbum.setText(mTypeMusicOnline.getPermalink());
@@ -89,7 +100,7 @@ public class DetailPlaylistActivity extends FragmentActivity {
 
         if (mManagerPlay.getIsPause()) {
             mImgPause.setImageResource(R.drawable.ic_pause);
-            mManagerPlay.onStart();
+            mManagerPlay.onStart(this);
             mManagerPlay.setIsPause(false);
         } else {
             mImgPause.setImageResource(R.drawable.ic_play);
@@ -115,8 +126,8 @@ public class DetailPlaylistActivity extends FragmentActivity {
 
     @Click(R.id.imgRepeat)
     void listenerRepeat() {
-        if(mManagerPlay.getListMusics() != null) {
-            if(mManagerPlay.isRepeat()) {
+        if (mManagerPlay.getListMusics() != null) {
+            if (mManagerPlay.isRepeat()) {
                 mManagerPlay.setIsRepeat(false);
                 mImgRepeat.setImageResource(R.drawable.ic_repeat);
             } else {
@@ -126,23 +137,48 @@ public class DetailPlaylistActivity extends FragmentActivity {
         }
     }
 
+    private void checkMediaPlayer() {
+        if (mManagerPlay.getCurrentInfoMediaPlayer() != null) {
+
+            mTxtNameMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getTitle());
+            mTxtArtistMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getArtist());
+            if (mManagerPlay.getIsPause()) {
+                mImgPause.setImageResource(R.drawable.ic_play);
+            } else {
+                mImgPause.setImageResource((R.drawable.ic_pause));
+            }
+
+            if (mManagerPlay.isRepeat()) {
+                mImgRepeat.setImageResource(R.drawable.icon_repeat_selected);
+            } else {
+                mImgRepeat.setImageResource(R.drawable.ic_repeat);
+            }
+
+            if (mManagerPlay.getCurrentInfoMediaPlayer().getArtwork_url() != null) {
+                ImageLoader.getInstance().displayImage(mManagerPlay.getCurrentInfoMediaPlayer().getArtwork_url(), mImgMediaPlayer);
+            }
+
+        }
+    }
+
     private void setClickListener() {
-       mRecyclerSearchAdapter.setOnClickItemListener(new RecyclerSearchAdapter.OnClickItemListener() {
-           @Override
-           public void onClick(int position) {
 
-               if (mManagerPlay.getCurrentMediaPlayer() != null) {
-                   mManagerPlay.getCurrentMediaPlayer().stop();
-               }
-               if(!mIsFirstClick) {
-                   mManagerPlay.playSoundOnline(mTypeMusicOnline.getTracks(), position,getApplicationContext());
-                   mIsFirstClick = true;
-               } else {
-                   mManagerPlay.playSoundOnline(position,getApplicationContext());
-               }
+        mRecyclerSearchAdapter.setOnClickItemListener(new RecyclerSearchAdapter.OnClickItemListener() {
+            @Override
+            public void onClick(int position) {
 
-           }
-       });
+                if (mManagerPlay.getCurrentMediaPlayer() != null) {
+                    mManagerPlay.getCurrentMediaPlayer().stop();
+                }
+                if (!mIsFirstClick) {
+                    mManagerPlay.playSoundOnline(mTypeMusicOnline.getTracks(), position, getApplicationContext());
+                    mIsFirstClick = true;
+                } else {
+                    mManagerPlay.playSoundOnline(position, getApplicationContext());
+                }
+
+            }
+        });
 
 
         mManagerPlay.setmOnSuccessPlayer(new ManagerPlay.OnSuccessPlayer() {
@@ -192,5 +228,20 @@ public class DetailPlaylistActivity extends FragmentActivity {
                 });
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(FieldFinal.ACTION_CHANGE_MEDIA);
+
+        registerReceiver(broadcastReceiver, mIntentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
     }
 }

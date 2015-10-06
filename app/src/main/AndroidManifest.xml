@@ -20,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".service.MediaPlayerService_"/>
+        <service android:name=".service.MediaPlayerService_"
+            android:exported="true"
+            android:enabled="true"/>
         <activity android:name=".activity.VideoViewActivity_"/>
         <activity android:name=".MainActivity_"/>
         <activity android:name=".activity.DetailAlbumActivity_"/>
@@ -29,6 +31,16 @@
             />
         <activity android:name=".activity.DetailPlaylistActivity_"/>
         <activity android:name=".activity.UIPlayMusicActivity_"/>
+
+        <receiver android:name="com.example.thong.playmusic.widget.NotificationBroadcast" >
+            <intent-filter>
+                <action android:name="com.tutorialsface.audioplayer.exit" />
+                <action android:name="com.tutorialsface.audioplayer.next" />
+                <action android:name="com.tutorialsface.audioplayer.play" />
+                <action android:name="com.tutorialsface.audioplayer.back" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -1,6 +1,10 @@
 package com.example.thong.playmusic.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.thong.playmusic.R;
 import com.example.thong.playmusic.adapter.RecyclerMusicsAdapter;
+import com.example.thong.playmusic.config.FieldFinal;
 import com.example.thong.playmusic.database.ManagerDatabase;
 import com.example.thong.playmusic.fragment.AddAlubmDialogFragment;
 import com.example.thong.playmusic.fragment.AddAlubmDialogFragment_;
@@ -39,6 +44,13 @@ public class DetailAlbumActivity extends FragmentActivity {
     private ManagerPlay mManagerPlay;
     private ArrayList<Tracks> mTrackses;
     private RecyclerMusicsAdapter mMusicsAdapter;
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            checkMediaPlayer();
+        }
+    };
+    private IntentFilter mIntentFilter;
 
     @ViewById(R.id.recyclerViewMusics)
     RecyclerView mRecyclerViewMusic;
@@ -103,7 +115,12 @@ public class DetailAlbumActivity extends FragmentActivity {
             ArrayList<Integer> idMusics = managerDatabase.getListIdMusics(mId);
             mTrackses = new ArrayList<>();
             for (int i =0; i < idMusics.size(); i++) {
-                mTrackses.add(managerDatabase.getDataMediaInfo(idMusics.get(i)));;
+
+                if(idMusics.get(i) != 0) {
+                    mTrackses.add(managerDatabase.getDataMediaInfo(idMusics.get(i)));;
+
+                }
+
                 Log.v(TAG, String.valueOf(mTrackses.get(i).getId()));
             }
         } catch (SQLException e) {
@@ -118,7 +135,7 @@ public class DetailAlbumActivity extends FragmentActivity {
 
         if(mManagerPlay.getIsPause()) {
             mImgPause.setImageResource(R.drawable.ic_pause);
-            mManagerPlay.onStart();
+            mManagerPlay.onStart(this);
             mManagerPlay.setIsPause(false);
         } else {
             mImgPause.setImageResource(R.drawable.ic_play);
@@ -140,8 +157,7 @@ public class DetailAlbumActivity extends FragmentActivity {
     }
 
     private void checkMediaPlayer() {
-        if (mManagerPlay.getCurrentMediaPlayer() != null) {
-
+        if (mManagerPlay.getCurrentInfoMediaPlayer() != null) {
             mTxtNameMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getTitle());
             mTxtArtistMediaPlayer.setText(mManagerPlay.getCurrentInfoMediaPlayer().getArtist());
             if(mManagerPlay.getIsPause()) {
@@ -153,13 +169,14 @@ public class DetailAlbumActivity extends FragmentActivity {
     }
 
     private void setClickListener() {
+
         mMusicsAdapter.setOnItemClick(new RecyclerMusicsAdapter.OnItemClick() {
             @Override
             public void onClick(int position) {
-                if( mManagerPlay.getCurrentMediaPlayer() != null) {
+                if (mManagerPlay.getCurrentMediaPlayer() != null) {
                     mManagerPlay.getCurrentMediaPlayer().stop();
                 }
-                mManagerPlay.playSound(getApplicationContext(),position,mTrackses);
+                mManagerPlay.playSound(getApplicationContext(), position, mTrackses);
                 checkMediaPlayer();
             }
         });
@@ -179,9 +196,7 @@ public class DetailAlbumActivity extends FragmentActivity {
                         ManagerDatabase managerDatabase = new ManagerDatabase(getApplicationContext());
                         try {
                             managerDatabase.open();
-
                             Log.v(TAG, String.valueOf(mTrackses.get(postion).getId()));
-
                             managerDatabase.insertMediaGroup(mTrackses.get(postion).getId(), albumId);
                             Toast.makeText(getApplicationContext(), "Add success", Toast.LENGTH_SHORT);
                         } catch (SQLException e) {
@@ -195,4 +210,18 @@ public class DetailAlbumActivity extends FragmentActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(FieldFinal.ACTION_CHANGE_MEDIA);
+
+        registerReceiver(broadcastReceiver, mIntentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
 }

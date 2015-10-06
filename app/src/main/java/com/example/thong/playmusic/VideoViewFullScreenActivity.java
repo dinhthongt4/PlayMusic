@@ -108,6 +108,5 @@ public class VideoViewFullScreenActivity extends Activity implements VideoContro
         setResult(1, getIntent().putExtra("position", mVideoView.getCurrentPosition()));
         Log.v("position", String.valueOf(mVideoView.getCurrentPosition()));
         super.onBackPressed();
-
     }
 }
